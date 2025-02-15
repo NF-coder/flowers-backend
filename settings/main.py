@@ -2,4 +2,4 @@ from dataclasses import dataclass
 
 @dataclass
 class Settings:
-    pass
+    API_VERSION = "1"

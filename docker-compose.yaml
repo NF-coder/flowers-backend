@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:13.3
+    container_name: database
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "release"
+      POSTGRES_PASSWORD: "horse_ate_green_guinea_pig"
+    ports:
+      - "5432:5432"

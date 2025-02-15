@@ -1,0 +1,1217 @@
+openapi: 3.0.0
+info: 
+  title: "Цветы"
+  version: 0.0.1
+  description: |
+    MVP из говна и палок 
+
+    Для использования бота нужно сделать отдельную авторизацию с Oauth телеги. Пока стандартный шаблон.
+    
+    Last update: 00:46 13.02.24 by NF
+servers:
+  - url: http://localhost:8453/api/v1/
+    description: API version 1
+
+paths:
+  /ping:
+    get:
+      summary: Проверка доступности API
+      tags:
+        - General
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
+  /signIn:
+    post:
+      summary: Авторизация
+      tags:
+        - Security
+      security:
+        - basicAuth: []
+      description: |
+        Токен представляет собой строку base64(username:password). Значение токена будет подставляться в заголовок `Authorization` в формате `Basic {token}`. Следовательно, сервер должен уметь идентифицировать пользователя по токену.
+        
+        В дальнейшем для авторизации пользовательских запросов будет использоваться JWT токен (и лучше б его в куки запихнуть, но в целях дебага пусть так). Значение токена будет подставляться в заголовок `Authorization` в формате `Bearer {token}`. Следовательно, сервер должен уметь идентифицировать пользователя по токену.
+        
+        Возможно будет добавлен дополнительный эндпоинт для авторизации через ТГ OAuth.
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /registerBasic:
+    post:
+      summary: Регистрация
+      tags:
+        - Security
+      description: |
+        Регистрация с проверкой по почте. TODO: реализовать для тг Oauth отдельную регистрацию только с по телефону у без подтверждения
+        
+        Данная функция регистрирует человека и отправляет код на почту. Выдаётся JWT с пометкой о незавершённой регистрации. 
+        
+        Для продолжения регистрации нужно дёрнуть /confirmEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: "#/components/schemas/Email"
+                type:
+                  type: string
+                  description: |
+                    Тип регистрации: как клиент (costumer) / как поставщик (supplier)
+                  example: "costumer"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /confirmEmail:
+    post:
+      summary: |
+        Подтверждение почты при регистрации (TODO: и её изменении)
+      tags:
+        - Security
+      security:
+        - bearerAuth: []
+      description: |
+        Подтверждение можно провести ТОЛЬКО имея JWT с пометкой о незавершённой регистрации. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: |
+                    Код подтверждения почты
+                  example: "AAABBB"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /deleteUser:
+    delete:
+      summary: |
+        Удаление пользователя
+      tags:
+        - Security
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignIn"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /setUserInfo:
+    post:
+      summary: Добавление/изминеие основной информации о пользователе
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                FirstName:
+                  $ref: "#/components/schemas/FirstName"
+                SecondName:
+                  $ref: "#/components/schemas/SecondName"
+                PhoneNumber:
+                  $ref: "#/components/schemas/PhoneNumber"
+                BirthDate:
+                  $ref: "#/components/schemas/BirthDate"
+                Gender:
+                  $ref: "#/components/schemas/Gender"
+                Email:
+                  $ref: "#/components/schemas/Email"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /setGeo:
+    post:
+      summary: Добавление/изминеие информации о местоположении пользователя
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Geo:
+                  $ref: "#/components/schemas/Geo"
+                
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /getBonusPoints:
+    get:
+      summary: Получение кол-ва бонусных баллов
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BonusPointsCount"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /getUserInfo:
+    get:
+      summary: Получение информации о пользователе
+      description: |
+        Если в query ничего не передано, то будет возвращать полный набор двнных. В остальных случаях требуемые для получения поля указываются в query
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: requiredUserInfo
+          required: true
+          schema:
+            $ref: "#/components/schemas/requiredUserInfoArray"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /orderInfo:
+    get:
+      summary: Информация о заказе по идентификатору
+      tags:
+        - User Order
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: orderId
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderStatus"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /createOrder:
+    post:
+      summary: Создание заказа
+      tags:
+        - User Order
+      security:
+        - bearerAuth: []
+      description: |
+        Пока опускаем момент с оплатой, интегрируем её потом. Скорее всего она не повлияет на данный эндпоинт
+        
+        TODO: добавить возможность отложенной доставки. До тех пор пользователи должны указывать подобное пожелание в комментариях
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Geo:
+                  $ref: "#/components/schemas/Adress"
+                FirstName:
+                  $ref: "#/components/schemas/FirstName"
+                SecondName:
+                  $ref: "#/components/schemas/SecondName"
+                Comment:
+                  $ref: "#/components/schemas/Comment"
+                PhoneNumber:
+                  $ref: "#/components/schemas/PhoneNumber"
+                ProductIdArray:
+                  $ref: "#/components/schemas/ProductIdArray"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /cancelOrder:
+    post:
+      summary: Отмена заказ
+      description: |
+        Возможность отменить заказ до какого-либо момента
+      tags:
+        - User Order
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: orderId
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        #403:
+        #  description: Responce with data
+        #  content:
+        #    application/json:
+        #      schema:
+        #        $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /addReview:
+    post:
+      summary: Написание отзыва к заказу
+      tags:
+        - User Order
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: orderId
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                review:
+                  $ref: "#/components/schemas/CatalogItemDescription"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /editReview:
+    put:
+      summary: Изменение отзыва к заказу
+      tags:
+        - User Order
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: reviewId
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                review:
+                  $ref: "#/components/schemas/CatalogItemDescription"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /deleteReview:
+    delete:
+      summary: Удаление отзыва к заказу
+      tags:
+        - User Order
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: reviewId
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /getCatalog:
+    get:
+      summary: Каталог товаров
+      tags:
+        - Catalog
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: integer
+            description: номер карточки товара в поиске
+            example: 0
+        - in: query
+          name: count
+          required: false
+          schema:
+            type: integer
+            description: число карточек в выдаче
+            example: 20
+        - in: query
+          name: category
+          required: false
+          schema:
+            type: string
+            description: категория товара
+            example: Небритые фиалки
+        - in: query
+          name: sort
+          required: false
+          schema:
+            type: string
+            description: |
+             Один из вариантов: default, price_upscending, price_descending
+            example: default
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogItemsArray"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /search:
+    get:
+      summary: Каталог товаров
+      tags:
+        - Catalog
+      parameters:
+        - in: query
+          name: request
+          required: true
+          schema:
+            type: string
+            description: поисковой запрос
+            example: Букет с либерахами
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: integer
+            description: номер карточки товара в поиске
+            example: 0
+        - in: query
+          name: count
+          required: false
+          schema:
+            type: integer
+            description: число карточек в выдаче
+            example: 20
+        - in: query
+          name: category
+          required: false
+          schema:
+            type: string
+            description: категория товара
+            example: Небритые фиалки
+        - in: query
+          name: sort
+          required: false
+          schema:
+            type: string
+            description: |
+             Один из вариантов: default, price_upscending, price_descending
+            example: default
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogItemsArray"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /searchHint:
+    get:
+      summary: Подсказки при наборе текста в поиске
+      tags:
+        - Catalog
+      parameters:
+        - in: query
+          name: count
+          required: false
+          schema:
+            type: integer
+            description: число карточек в выдаче
+            example: 20
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchHints"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /getCatalogItemDetails:
+    get:
+      summary: Получение деталей о товаре
+      tags:
+        - Catalog
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProductId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogItemDetails"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /admin/listSuppliersRequests:
+    get:
+      summary: |
+        Список заявок на добавление поставщиков
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: integer
+            description: Номер первой заявки
+            example: 0
+        - in: query
+          name: count
+          required: false
+          schema:
+            type: integer
+            description: Число заявок в выдаче
+            example: 20
+        - in: query
+          name: sort
+          required: false
+          schema:
+            type: string
+            description: |
+             Один из вариантов: time_upscending, time_descending
+            example: default
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierRequestsArray"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /admin/approveSupplierRequest:
+    post:
+      summary: |
+        Одобрение заявки от поставщика
+      description: |
+        Передайте что-либо из данных пользователя: id или email
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: email
+          required: false
+          schema:
+            $ref: "#/components/schemas/Email"
+        - in: query
+          name: userId
+          required: false
+          schema:
+            $ref: "#/components/schemas/UserId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /admin/deleteUser:
+    delete:
+      summary: |
+        Удаление пользователя
+      description: |
+        Передайте что-либо из данных пользователя: id или email
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: false
+          schema:
+            $ref: "#/components/schemas/UserId"
+        - in: query
+          name: email
+          required: false
+          schema:
+            $ref: "#/components/schemas/Email"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /addProduct:
+    post:
+      summary: Добавление товара
+      tags:
+        - Supplier
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogItemCreation"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /editProduct:
+    put:
+      summary: Изменение товара
+      tags:
+        - Supplier
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: productId
+          required: false
+          schema:
+            $ref: "#/components/schemas/ProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CatalogItemCreation"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /deleteProduct:
+    delete:
+      summary: Удаление товара
+      tags:
+        - Supplier
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: productId
+          required: false
+          schema:
+            $ref: "#/components/schemas/ProductId"
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DefaultPing"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /myProductsList:
+    get:
+      summary: Удаление товара
+      tags:
+        - Supplier
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: integer
+            description: Номер первого продукта
+            example: 0
+        - in: query
+          name: count
+          required: false
+          schema:
+            type: integer
+            description: Число продуктов в выдаче
+            example: 20
+        - in: query
+          name: sort
+          required: false
+          schema:
+            type: string
+            description: |
+             Один из вариантов: time_upscending, time_descending, rank_upscending, rank_descending, timesBought_upscending, timesBought_descending
+            example: default
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CatalogItemsArray"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
+      
+  schemas:
+    FirstName:
+      type: string
+      description: Имя
+      maxLength: 30
+      pattern: "[a-zA-Z]+"
+      example: Макака
+    SecondName:
+      type: string
+      description: Фамилия
+      maxLength: 50
+      pattern: "[a-zA-Z]+"
+      example: Тупая
+    PhoneNumber:
+      type: string
+      description: Номер телефона
+      maxLength: 16
+      pattern: "/+[0-9]{11,15}"
+      example: +78005553535
+    BirthDate:
+      type: string
+      description: Дата рождения в формате ДД-ММ
+      maxLength: 5
+      example: ДД-ММ # не стоит добавляить год из-за его возможного отсутствия в ТГ
+    Gender:
+      type: string
+      description: Указываем M/F
+      maxLength: 1
+      example: M
+    Email:
+      type: string
+      description: Почта для всяких непотребств
+      maxLength: 64 # в падлу писать regex
+      example: example@example.com
+    Geo:
+      type: string
+      description: Кординаты в десятичных градусах
+      maxLength: 64 # в падлу писать regex
+      example: 59.939095, 30.315868
+    UserId:
+      type: string
+      description: Номер заказа
+      example: 000-000-000-001
+    OrderId:
+      type: string
+      description: Номер заказа
+      example: 000-000-000-001
+    ProductId:
+      type: string
+      description: Номер товара
+      example: 000-000-000-001
+    Comment:
+      type: string
+      description: Комментарий от заказчика
+      maxLength: 300
+      example: Домофон не работает, позвоните на номер телефона, указанный в заказе
+    Adress:
+      type: object
+      description: Адрес гоя
+      properties:
+        Contry:
+          type: string
+          description: "Contry of costumer"
+          example: "Russia"
+        City:
+          type: string
+          description: "City/town or etc of costumer"
+          example: "St. Petersburg"
+        Street:
+          type: string
+          description: "Street or etc of costumer"
+          example: "Lensoveta street"
+        Building:
+          type: string
+          description: "Home number (with additional data like letter)"
+          example: "23"
+        Flat:
+          type: string
+          description: "Flat/Office number"
+          example: "147"
+    
+    requiredUserInfoArray:
+      type: array
+      description: Нужные для получения поля профиля пользователя
+      items:
+        type: string
+        description: Значение тега.
+        example: Geo
+        maxLength: 8
+      example:
+        - FirstName
+        - SecondName
+        - BirthDate
+        - Gender
+        - Email
+        - Geo
+        - PhoneNumber
+        - UserID
+    
+    ProductIdArray:
+      type: array
+      description: массив номеров заказанных продуктов
+      items:
+        $ref: "#/components/schemas/ProductId"
+    
+    SearchHints:
+      type: array
+      description: Подсказки при наборе текста
+      items:
+        type: string
+        description: Текстовое микроописание подсказок
+        example: Цветок папоротника
+        maxLength: 10
+    
+    OrderStatus:
+      type: object
+      required:
+        - orderId
+        - orderStatus
+        - orderCreatedTime
+        - adress
+        - comment
+        - customerPhone
+        - customerFirstName
+        - customerSecondName
+        - productIdArray
+      properties:
+        orderId:
+          $ref: "#/components/schemas/OrderId"
+        adress:
+          $ref: "#/components/schemas/Adress"
+        orderStatus:
+          type: string
+          description: Статус заказа # maybe we must use enum to create pretty bar (or add smth like stage number)
+          example: Обрабатывается...
+        orderCreatedTime:
+          type: string
+          description: Время создания заказа
+          example: MM-HH DD-MM
+        customerPhone:
+          $ref: "#/components/schemas/PhoneNumber"
+        customerFirstName:
+          $ref: "#/components/schemas/FirstName"
+        customerSecondName:
+          $ref: "#/components/schemas/SecondName"
+        comment:
+          $ref: "#/components/schemas/Comment"  
+        productIdArray:
+          $ref: "#/components/schemas/ProductIdArray" 
+
+    SignIn:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: "JWT token (expires in around an hour)"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    
+    UserInfo:
+      type: object
+      properties:
+        FirstName:
+          $ref: "#/components/schemas/FirstName"
+        SecondName:
+          $ref: "#/components/schemas/SecondName"
+        PhoneNumber:
+          $ref: "#/components/schemas/PhoneNumber"
+        BirthDate:
+          $ref: "#/components/schemas/BirthDate"
+        Gender:
+          $ref: "#/components/schemas/Gender"
+        Email:
+          $ref: "#/components/schemas/Email"
+        UserId:
+          $ref: "#/components/schemas/UserId"
+    
+    SupplierRequest:
+      type: object
+      properties:
+        Email:
+          $ref: "#/components/schemas/Email"
+        UserId:
+          $ref: "#/components/schemas/UserId"
+    SupplierRequestsArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/SupplierRequest"
+    
+    CatalogItemTitle:
+      type: string
+      description: "Краткое описание букета"
+      example: "Букет из чего-то там"
+    CatalogItemAuthor:
+      type: string
+      description: "Название магазина"
+      example: "ООО Рога и копыта"
+    CatalogItemImage:
+      type: string
+      description: "Ссылка на картинку с букетом"
+      example: "https://example.com/test.png"
+    CatalogItemCost:
+      type: object
+      properties:
+        currency: # задел на будуюущее для расширения
+          type: string
+          description: "Валюта"
+          example: RUB
+        costNum:
+          type: integer
+          description: Число тубриков
+          example: 30
+    CatalogItemReviewsInfo:
+      type: object
+      properties:
+        rank:
+          type: number
+          description: "Рейтинг товара c точностью до 1 знака после запятой с округлением вверх (4.001=4.1)"
+          example: 4.8
+        reviewsCount:
+          type: integer
+          description: Число отзыврв
+          example: 30
+    CatalogItem:
+      type: object
+      description: Элемент каталога
+      properties:
+        title:
+          $ref: "#/components/schemas/CatalogItemTitle"
+        author:
+          $ref: "#/components/schemas/CatalogItemAuthor"
+        image:
+          $ref: "#/components/schemas/CatalogItemImage"
+        productId:
+          $ref: "#/components/schemas/ProductId"
+        cost:
+          $ref: "#/components/schemas/CatalogItemCost"
+        reviews:
+          $ref: "#/components/schemas/CatalogItemReviewsInfo"
+    CatalogItemsArray:
+      type: array
+      description: Массив элементов каталога
+      items:
+        $ref: "#/components/schemas/CatalogItem"
+    CatalogItemDescription:
+      type: string
+      description: Описание элемента каталога
+      example: |
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+    CatalogItemBoughtTimesCounter:
+      type: integer
+      description: Сколько раз был куплен товар
+      example: 100
+    CatalogItemDetails:
+      type: object
+      description: Детальное описание элемента каталога
+      properties:
+        title:
+          $ref: "#/components/schemas/CatalogItemTitle"
+        author:
+          $ref: "#/components/schemas/CatalogItemAuthor"
+        titleImage:
+          $ref: "#/components/schemas/CatalogItemImage"
+        additionalImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogItemImage"
+        productId:
+          $ref: "#/components/schemas/ProductId"
+        cost:
+          $ref: "#/components/schemas/CatalogItemCost"
+        reviews:
+          $ref: "#/components/schemas/CatalogItemReviewsInfo"
+        description:
+          $ref: "#/components/schemas/CatalogItemDescription"
+        boughtTimesCounter:
+          $ref: "#/components/schemas/CatalogItemBoughtTimesCounter"
+    CatalogItemCreation:
+      type: object
+      description: Описание товара со стороны продавца
+      properties:
+        title:
+          $ref: "#/components/schemas/CatalogItemTitle"
+        titleImage:
+          $ref: "#/components/schemas/CatalogItemImage"
+        additionalImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CatalogItemImage"
+        cost:
+          $ref: "#/components/schemas/CatalogItemCost"
+        description:
+          $ref: "#/components/schemas/CatalogItemDescription"
+    
+    DefaultPing:
+      type: object
+      properties:
+        data:
+          type: string
+          description: "DO NOT USE THIS FIELD! It's placeholder and can be removed anytime/"
+          example: "gooooool!"
+    
+    BonusPointsCount:
+      type: object
+      required:
+        - pointsCount
+      properties:
+        pointsCount:
+          type: integer
+          description: "Bonus points count"
+          example: 666
+
+    
+    Error:
+      type: object
+      required:
+        - description
+      properties:
+        code:
+          type: integer
+          description: "Code of error (optional! it's better to get status code from responce directly!)"
+          example: 500
+        description:
+          type: string
+          description: "Description of error"
+          example: description of error

@@ -8,12 +8,13 @@ from settings import MainConfig
 
 from fastapi import FastAPI, Query, HTTPException, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi.responses import JSONResponse
+
 from typing import Dict, Any
 from datetime import datetime
 
 from api import *
+from exceptions import BasicException
 
 # -- INIT BLOCK --
 
@@ -32,16 +33,15 @@ app.include_router(auth.router)
 # app.include_router(cb_info.router)
 # app.include_router(moex_info.router)
 
-class HttpException(Exception):
-    def __init__(self, code: int, output: dict):
-        self.code = code
-        self.description = output
 
-@app.exception_handler(HttpException)
-async def unicorn_exception_handler(request: Request, exc: HttpException):
+@app.exception_handler(BasicException)
+async def unicorn_exception_handler(request: Request, exc: BasicException):
     return JSONResponse(
-        code=exc.code,
-        description=exc.output,
+        status_code=exc.code,
+        content={
+            "description": exc.description,
+            "code": exc.code
+        }
     )
 
 # -- MAIN BLOCK --

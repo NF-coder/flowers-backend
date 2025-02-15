@@ -2,7 +2,7 @@ from fastapi import APIRouter, Header
 from typing import Dict, Any, Annotated
 
 from settings import MainConfig
-#from validation import AuthModels
+from validation import AuthModels
 
 # from libs.database import *
 # from libs.tokens import *
@@ -13,35 +13,35 @@ router = APIRouter(
 )
 
 
-@router.post("/signIn", tags = ["auth"], status_code=201)
-async def test(
-    Authorization: Annotated[str, Header()],
-    ):
-    return {
-        "out": Authorization
-    }
+#@router.post("/signIn", tags = ["auth"], status_code=201)
+#async def test(
+#        Authorization: Annotated[str, Header()],
+#    ):
+#    return {
+#        "out": Authorization
+#    }
 
-@router.post("/register", tags = ["auth"], status_code=201)
-async def register(
-    Authorization: AuthModels.SignIn[Any, Any]
-    ):
+@router.post("/registerBasic", tags = ["auth"], status_code=201)
+async def register(  # noqa: C901
+        request_body: AuthModels.RegisterBasic,
+    ) -> AuthModels.RespSchemaRegisterBasic:
     '''
         POST reqest wich implements registration
-        Input:
-            login - unique login
-            password - password
+        Args:
+            login (in 'Body'): unique user login
+            password: user password
+            type - user's account password
         Output:
-            jwt_token - jwt token
+            [Body] token - jwt token
     '''
-    await Validators.val_register(**payload)
 
-    API = await Users.start()
-    await API.register(**payload)
-
-    user = (await API.get_by_login(payload["login"]))[0]
-
-    token = (await Tokens.get_acess_token(user["login"], user["id"]))[0]
-    return {"token": token}
+    #API = await Users.start()
+    #await API.register(**payload)
+#
+    #user = (await API.get_by_login(payload["login"]))[0]
+#
+    #token = (await Tokens.get_acess_token(user["login"], user["id"]))[0]
+    return {"token": "AAA.BBB.CCC"}
 
 
 #@router.post("/signIn", tags = ["auth"], status_code=200)

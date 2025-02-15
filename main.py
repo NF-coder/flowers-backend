@@ -32,8 +32,13 @@ app.include_router(auth.router)
 # app.include_router(cb_info.router)
 # app.include_router(moex_info.router)
 
-@app.exception_handler(UnicornException)
-async def unicorn_exception_handler(request: Request, exc: UnicornException):
+class HttpException(Exception):
+    def __init__(self, code: int, output: dict):
+        self.code = code
+        self.description = output
+
+@app.exception_handler(HttpException)
+async def unicorn_exception_handler(request: Request, exc: HttpException):
     return JSONResponse(
         code=exc.code,
         description=exc.output,

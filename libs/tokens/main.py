@@ -21,7 +21,7 @@ class Tokens():
         }
         return jwt.encode(encode, key = SequritySettings.SECURITY_KEY, algorithm = SequritySettings.ALGORYTM), exp
     
-    async def decode_acess_token(token, info_mode: bool = False) -> str:
+    async def decode_acess_token(token) -> str:
         try:
             payload = jwt.decode(token, key = SequritySettings.SECURITY_KEY, algorithms = [SequritySettings.ALGORYTM])
             #login, uid, expires = payload["login"], payload["id"], payload["expires"]

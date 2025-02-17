@@ -1,7 +1,7 @@
 from typing_extensions import Self
 from pydantic import BaseModel, Field, field_validator
 
-from exceptions import BasicException
+from exceptions import HttpException as BasicException
 
 from settings import AuthConfig
 

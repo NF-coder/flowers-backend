@@ -53,7 +53,7 @@ class Users(Base):
             Returns:
                 bool: True if already in database
         '''
-        return len(await self.api.get_by_email(email)) == 0
+        return len(await self.api.get_by_email(email)) == 1
     
     async def register(self, email: str, password: str) -> None:
         '''

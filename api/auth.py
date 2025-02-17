@@ -37,7 +37,7 @@ async def register(
             token (AuthModels.RespSchemaRegisterBasic):
                 Response with JWT token. For more inforamtion see `AuthModels.RespSchemaRegisterBasic`
         Raises:
-            NotUnique: If email is already exists in database
+            HttpException: for all possible errors
     '''
 
     try:
@@ -56,7 +56,7 @@ async def register(
             description=exc.description
         )
 
-    user = API.get_by_login(request_body.email)
+    user = await API.get_by_email(request_body.email)
 
     token = (await Tokens.get_acess_token(user["email"], user["id"]))[0]
     return {"token": token}

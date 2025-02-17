@@ -4,8 +4,11 @@ from typing import Dict, Any, Annotated
 from settings import MainConfig
 from validation import AuthModels
 
-# from libs.database import *
-# from libs.tokens import *
+from libs.database import *
+from libs.tokens import Tokens
+
+from exceptions.database_exceptions import NotUnique
+from exceptions.basic_exception import HttpException
 
 router = APIRouter(
     prefix=f"/api/v{MainConfig.API_VERSION}/auth",
@@ -22,26 +25,41 @@ router = APIRouter(
 #    }
 
 @router.post("/registerBasic", tags = ["auth"], status_code=201)
-async def register(  # noqa: C901
+async def register(
         request_body: AuthModels.RegisterBasic,
     ) -> AuthModels.RespSchemaRegisterBasic:
     '''
         POST reqest wich implements registration
         Args:
-            login (in 'Body'): unique user login
-            password: user password
-            type - user's account password
-        Output:
-            [Body] token - jwt token
+            request_body (AuthModels.RegisterBasic):
+                Request body which contains `email`, `password` and `type`. For more information see `AuthModels.RegisterBasic`
+        Returns:
+            token (AuthModels.RespSchemaRegisterBasic):
+                Response with JWT token. For more inforamtion see `AuthModels.RespSchemaRegisterBasic`
+        Raises:
+            NotUnique: If email is already exists in database
     '''
 
-    #API = await Users.start()
-    #await API.register(**payload)
-#
-    #user = (await API.get_by_login(payload["login"]))[0]
-#
-    #token = (await Tokens.get_acess_token(user["login"], user["id"]))[0]
-    return {"token": "AAA.BBB.CCC"}
+    try:
+        API = await Users.start()
+    except NoDatabaseConnection as exc:
+        raise HttpException(
+            code=500,
+            description=exc.description
+        )
+    
+    try:
+        await API.register(request_body.email, request_body.password)
+    except NotUnique as exc:
+        raise HttpException(
+            code=400,
+            description=exc.description
+        )
+
+    user = API.get_by_login(request_body.email)
+
+    token = (await Tokens.get_acess_token(user["email"], user["id"]))[0]
+    return {"token": token}
 
 
 #@router.post("/signIn", tags = ["auth"], status_code=200)

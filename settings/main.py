@@ -14,7 +14,12 @@ class AuthSettings:
     '''
         Settings of auth
         Attributes:
-            AVAILABLE_ACCOUNT_TYPES (:obj:`list` of :obj:`int`): version of API
+            AVAILABLE_ACCOUNT_TYPES(`list` of `str`):
+                Available account types list. Used for validation while registration
+            EMAIL_CHECKER_REGEX(str):
+                Email regex. Used for validation while registration
+            BASIC_TOKEN_REGEX(str):
+                Basic token regex. Used for validation while sign-in
     '''
     AVAILABLE_ACCOUNT_TYPES = ["costumer", "supplier"]
     BASIC_TOKEN_REGEX = r"^Basic .+"

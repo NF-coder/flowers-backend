@@ -1,11 +1,10 @@
-import re
-
 from typing_extensions import Self
-from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from exceptions import BasicException
 
 from settings import AuthConfig
+
 
 class SignIn(BaseModel):
     '''
@@ -24,12 +23,16 @@ class SignIn(BaseModel):
 
     @field_validator('Authorization', mode='after')
     @classmethod
-    def check_basic_auth_token(cls, token: str) -> str:
+    def check_basic_auth_token(cls: Self, token: str) -> str:
         '''
             Check if Basic token has valid format
+            Raises:
+                BasicException:
+                    - code: `400`
+                    - description: `Invalid form of Basic Authentification token`
         '''
         if token[:6] != "Basic ":
-            raise BasicException('Invalid form of Basic Authentification token')
+            raise BasicException(400, 'Invalid form of Basic Authentification token')
         return token
 
 class RegisterBasic(BaseModel):
@@ -61,16 +64,16 @@ class RegisterBasic(BaseModel):
     
     @field_validator("type", mode="after")
     @classmethod
-    def check_account_type(cls, type: str) -> str:
+    def check_account_type(cls: Self, type: str) -> str:
         '''
             Checks if account type exists in AuthConfig.AVAILABLE_ACCOUNT_TYPES
-            Parameters:
-                type (str): user's account type
-            Returns:
-                type (str): user's account type
+            Raises:
+                BasicException:
+                    - code: `400`
+                    - description: `Unprocassable type of account`
         '''
         if type not in AuthConfig.AVAILABLE_ACCOUNT_TYPES:
-            raise BasicException(400, 'Неизвестный тип аккаунта')
+            raise BasicException(400, 'Unprocassable type of account')
         return type
 
 class RespSchemaRegisterBasic(BaseModel):

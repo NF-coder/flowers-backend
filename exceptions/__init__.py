@@ -1,2 +1,2 @@
-from .basic_exception import HttpException as BasicException
-from .database_exceptions import NotUnique
+from .basic_exception import *
+from .database_exceptions import *

@@ -6,7 +6,7 @@
 
 from settings import MainConfig
 
-from fastapi import FastAPI, Query, HTTPException, Request, APIRouter
+from fastapi import FastAPI, Query, Request, APIRouter
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 # from datetime import datetime
 
 from api import *
-from exceptions import BasicException
+from exceptions import HttpException
 
 # -- INIT BLOCK --
 
@@ -36,14 +36,14 @@ app.include_router(auth.router)
 
 # -- MAIN BLOCK --
 
-@app.exception_handler(BasicException)
-async def basicException_handler(request: Request, exc: BasicException) -> JSONResponse:
+@app.exception_handler(HttpException)
+async def basicException_handler(request: Request, exc: HttpException) -> JSONResponse:
     '''
-        Function, which catches BasicException and sends info about it to client
+        Function, which catches HttpException and sends info about it to client
         Args:
             request (Request):
                 Not used, but requried argument. Contains data about request
-            exc (BasicException):
+            exc (HttpException):
                 A dataclass with data about exception (`code` and `description`)
         Returns:
             obj (JSONResponse): 

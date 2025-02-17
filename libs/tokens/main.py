@@ -1,9 +1,9 @@
-from .security.secutity import Security as SequritySettings
+from settings.main import SecuritySettings
 
 # Encryption
 import bcrypt
 from datetime import timedelta, datetime, timezone
-from jose import jwt, JWTError 
+from jose import jwt, JWTError
 
 class Tokens():
     @staticmethod
@@ -12,18 +12,18 @@ class Tokens():
     async def get_acess_token(login: str, id: int) -> str:
         exp = int(
                 datetime.timestamp(
-                    datetime.now(timezone.utc) + timedelta(minutes=SequritySettings.ACCESS_TOKEN_EXPIRE_MINUTES)
+                    datetime.now(timezone.utc) + timedelta(minutes=SecuritySettings.ACCESS_TOKEN_EXPIRE_MINUTES)
                 )
             )
         encode = {
             "id": id,
             "expires": exp
         }
-        return jwt.encode(encode, key = SequritySettings.SECURITY_KEY, algorithm = SequritySettings.ALGORYTM), exp
+        return jwt.encode(encode, key = SecuritySettings.SECURITY_KEY, algorithm = SecuritySettings.ALGORYTM), exp
     
     async def decode_acess_token(token) -> str:
         try:
-            payload = jwt.decode(token, key = SequritySettings.SECURITY_KEY, algorithms = [SequritySettings.ALGORYTM])
+            payload = jwt.decode(token, key = SecuritySettings.SECURITY_KEY, algorithms = [SecuritySettings.ALGORYTM])
             #login, uid, expires = payload["login"], payload["id"], payload["expires"]
             
             #if login is None or uid is None: raise Exception("Can't decode jwt")

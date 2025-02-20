@@ -1,7 +1,7 @@
 from sqlalchemy import String, Integer, Column, LargeBinary, UniqueConstraint, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
-class Users_DB(declarative_base()):
+class UsersDB(declarative_base()):
     # Self-documentated code
     
     __tablename__ = 'Users'

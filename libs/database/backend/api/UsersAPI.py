@@ -1,7 +1,7 @@
 #Required lib import
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.orm import sessionmaker
 
 import asyncio
@@ -9,53 +9,12 @@ import traceback
 import os
 from typing import Self, Dict
 
-from .fields import *
-from .utils.utils import Middleware_utils
+from ..utils.utils import Middleware_utils
+from .BasicAPI import BasicAPI
 
 from exceptions.database_exceptions import NoDatabaseConnection
 
-class DB_API:
-    @classmethod # Cause I can't use asyncio in __magic__ functions, so...
-    async def start(cls, base_fields, base_url) -> Self:
-        '''
-            Method that starts connection to database
-            Args:
-                base_fields(`declarative_base()` inheritor?):
-                    Schema of databse. Can be found in backend.fields
-                base_url(str):
-                    Link to database. Starts with (for example): `postgresql+asyncpg://`
-            Returns:
-                self:
-            Raises:
-                NoDatabaseConnection: If engine for some reason can't connect to database
-        '''
-        try:
-            self = cls()
-
-            self.base = base_fields
-            self.engine = create_async_engine(base_url)
-
-            await self.init_db()
-
-            self.session = sessionmaker(
-                bind = self.engine,
-                class_ = AsyncSession,
-                expire_on_commit = False
-            )
-
-        except Exception as exc:
-            raise NoDatabaseConnection(
-                description="Error while connecting to database! [DB_API]"
-            )
-            #print(f"Error while API init:\n{traceback.format_exc()}\n")
-
-        return self
-    
-    async def init_db(self): # special function for database startup
-        async with self.engine.begin() as conn:
-            await conn.run_sync(self.base.metadata.create_all)
-
-class Users_API(DB_API):
+class UsersAPI(BasicAPI):
     async def register(self, email: str, password: bytes, type: str) -> None:
         '''
             Method that registers users.
@@ -121,6 +80,32 @@ class Users_API(DB_API):
         statement = update(self.base).where(self.base.id == id).values(
             isEmailConfirmed=status
         )
+        async with self.session() as session:
+            await session.execute(statement)
+            await session.commit()
+    
+    async def delete_by_id(self, id: int) -> None:
+        '''
+            Method that deleted user with specified id.
+            Args:
+                id(int): User's id
+            Returns:
+                NoneType:
+        '''
+        statement = delete(self.base).where(self.base.id == id)
+        async with self.session() as session:
+            await session.execute(statement)
+            await session.commit()
+    
+    async def delete_by_email(self, email: str) -> None:
+        '''
+            Method that deleted user with specified id.
+            Args:
+                email(str): User's email
+            Returns:
+                NoneType:
+        '''
+        statement = delete(self.base).where(self.base.email == email)
         async with self.session() as session:
             await session.execute(statement)
             await session.commit()

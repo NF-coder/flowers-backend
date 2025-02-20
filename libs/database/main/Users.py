@@ -1,7 +1,3 @@
-# Submodules import
-from .backend.api import *
-from .backend.fields import *
-
 import traceback
 import asyncio
 import bcrypt
@@ -9,30 +5,14 @@ import bcrypt
 from typing import Self
 
 from exceptions.database_exceptions import *
-from settings import SecuritySettings
+from settings import SecurityConfig
 
-class Base:
-    @classmethod
-    async def start_(cls, api: DB_API, base_fields: Users_DB, base_url: str) -> Self:
-        '''
-            Method that starts connection to database
-            Args:
-                api(`DB_API` class inheritor):
-                    Low-level API of database. Can be found in backemd.api
-                base_fields(`declarative_base()` inheritor):
-                    Schema of databse. Can be found in backend.fields
-                base_url(str):
-                    Link to database. Starts with (for example): `postgresql+asyncpg://`
-            Returns:
-                self:
-        '''
+from .Basic import Basic
 
-        self = cls()
-        self.api = await api.start(base_fields, base_url)
+from ..backend.api.UsersAPI import UsersAPI
+from ..backend.fields.UsersDB import UsersDB
 
-        return self
-
-class Users(Base):
+class Users(Basic):
     @classmethod
     async def start(self) -> Self:
         '''
@@ -40,7 +20,7 @@ class Users(Base):
             Returns:
                 `Users` object
         '''
-        return await self.start_(Users_API, Users_DB, SecuritySettings.DATABASE_URL)
+        return await self.start_(UsersAPI, UsersDB, SecurityConfig.DATABASE_URL)
     
     async def is_email_registered(self, email: str) -> bool:
         '''
@@ -145,4 +125,30 @@ class Users(Base):
         await self.api.set_email_confirmation_status_by_id(
             id=id,
             status=status
+        )
+    
+    async def delete_user_by_id(self, id: int) -> None:
+        '''
+            ## CAN CAUSE SECURITY INCIDENTS! USE CAREFULLY!
+            Method that deletes user with specified id
+            Args:
+                id(int): User's id
+            Returns:
+                NoneType:
+        '''
+        await self.api.delete_by_id(
+            id=id
+        )
+    
+    async def delete_user_by_email(self, email: str) -> None:
+        '''
+            ## CAN CAUSE SECURITY INCIDENTS! USE CAREFULLY!
+            Method that deletes user with specified id
+            Args:
+                email(str): User's email
+            Returns:
+                NoneType:
+        '''
+        await self.api.delete_by_email(
+            email=email
         )

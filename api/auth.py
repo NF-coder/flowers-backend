@@ -2,9 +2,9 @@ from fastapi import APIRouter, Header, Body
 from typing import Dict, Any, Annotated
 
 from settings import MainConfig
-from validation.auth import signInModels, confirmEmailModels, registerBasicModels
+from validation.auth import signInModels, confirmEmailModels, registerBasicModels, deleteUserModels
 
-from libs.database import *
+from libs.database import Users
 from libs.tokens import Tokens
 
 from exceptions.basic_exception import BasicException
@@ -137,33 +137,31 @@ async def confirmEmail(
     }
 
 
-# TODO: rewrite this
+# Can create security issues!
 @router.delete("/deleteUser", tags = ["auth"], status_code=201)
 async def deleteUser(
-        request_body: Annotated[registerBasicModels.RequestModel, Body()],
-    ) -> registerBasicModels.ResponceSchema:
+        request_header: Annotated[deleteUserModels.RequestModel, Header()],
+    ) -> deleteUserModels.ResponceSchema:
     '''
-        POST reqest wich implements registration
+        POST reqest wich implements deletion of user. Must be initiated by user
         Args:
-            request_body (registerBasicModels.RequestModel):
-                Request body which contains `email`, `password` and `type`. For more information see `registerBasicModels.RequestModel`
+            request_header (deleteUserModels.RequestModel):
+                Request header which contains JWT token. For more information see `deleteUserModels.RequestModel`
         Returns:
-            token (registerBasicModels.ResponceSchema):
-                Response with JWT token. For more inforamtion see `registerBasicModels.ResponceSchema`
+            status (deleteUserModels.ResponceSchema):
+                Response with deletion status. For more inforamtion see `deleteUserModels.ResponceSchema`
         Raises:
             BasicException: for all possible errors
     '''
 
     API = await Users.start()
     
-    await API.register(request_body.email, request_body.password, request_body.type)
-
-    user = await API.get_by_email(request_body.email)
-    token, _ = await Tokens.get_acess_token(
-        id=user["id"],
-        email=user["email"],
-        type=user["type"],
-        isEmailConfirmed=user["isEmailConfirmed"],
-        isSupplierStatusConfirmed=user["isSupplierStatusConfirmed"]
+    decoded_auth_info = await Tokens.decode_acess_token(
+        request_header.Authorization[7:]
     )
-    return {"token": token}
+
+    await API.delete_user_by_email(
+        decoded_auth_info.email
+    )  # DO NOT DELETE BY ID!!! It may cause security vulnerability because we can't deactivate JWT token and user can delete somone else!
+
+    return {"status": "ok"}

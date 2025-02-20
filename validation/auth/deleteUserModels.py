@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from exceptions import BasicException
 
-class RequestHeaderModel(BaseModel):
+class RequestModel(BaseModel):
     '''
         Request headers validator for /auth/ConfirmEmail
         Attributes:
@@ -29,31 +29,14 @@ class RequestHeaderModel(BaseModel):
         if token[:7] != "Bearer ":
             raise BasicException(400, 'Invalid form of Bearer Authentification token')
         return token
-    
-class RequestBodyModel(BaseModel):
-    '''
-        Request body validator for /auth/ConfirmEmail
-        Attributes:
-            code (str): email confirmation code
-                - max-lenght - 6 chars
-                - must correspond to the regex in AuthConfig.EMAIL_CHECKER_REGEX
-            
-    '''
-    code: str = Field(
-        default=None,
-        max_length=6,
-        min_length=6,
-        examples="AAABBB",
-        description="Email confirmation code",
-    )
 
 class ResponceSchema(BaseModel):
     '''
         Responce schema for /api/{version}/auth/registerBasic
         Attributes:
-            token (str): user's new jwt token
+            status (str): user deletion operation status
     '''
-    token: str = Field(
-        default="Bearer AAA.BBB.CCC",
-        description="Bearer auth token"
+    status: str = Field(
+        default="ok",
+        description="Deletion status"
     )

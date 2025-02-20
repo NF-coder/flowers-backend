@@ -1,7 +1,7 @@
 #Required lib import
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import sessionmaker
 
 import asyncio
@@ -44,7 +44,9 @@ class DB_API:
             )
 
         except Exception as exc:
-            raise NoDatabaseConnection("Error while connecting to database! [DB_API]")
+            raise NoDatabaseConnection(
+                description="Error while connecting to database! [DB_API]"
+            )
             #print(f"Error while API init:\n{traceback.format_exc()}\n")
 
         return self
@@ -54,17 +56,25 @@ class DB_API:
             await conn.run_sync(self.base.metadata.create_all)
 
 class Users_API(DB_API):
-    async def register(self, email: str, password: bytes) -> None:
+    async def register(self, email: str, password: bytes, type: str) -> None:
         '''
             Method that registers users.
             Args:
                 email(str): user's email
                 password(bytes): hashed and salted user's password bytes
+                type(str): user's account type
             Returns:
                 NoneType:
         '''
+        statement = self.base(
+            email=email,
+            password=password,
+            type=type,
+            isEmailConfirmed=False,
+            isSupplierStatusConfirmed=False
+        )
         async with self.session() as session:
-            session.add(self.base(email=email, password=password))
+            session.add(statement)
             await session.commit()
     
     async def get_by_email(self, email: str) -> list[Dict]:
@@ -75,10 +85,43 @@ class Users_API(DB_API):
             Returns:
                 list: all user's data
         '''
+        statement = select(self.base).where(self.base.email == email)
         async with self.session() as session:
-            statement = select(self.base).where(self.base.email == email)
             out = await session.execute(statement)
         return await Middleware_utils.db_answer_to_dict(
                                                         out,
                                                         table_name = self.base.__name__
                     )
+    
+    async def get_by_id(self, id: int) -> list[Dict]:
+        '''
+            Method that returns all user with specified id.
+            Args:
+                id(str): user's id
+            Returns:
+                list: all user's data
+        '''
+        statement = select(self.base).where(self.base.id == id)
+        async with self.session() as session:
+            out = await session.execute(statement)
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+    
+    async def set_email_confirmation_status_by_id(self, id: int, status: bool) -> None:
+        '''
+            Method that returns all user with specified id.
+            Args:
+                id(int): User's id
+                status(bool): New email confirmation status 
+            Returns:
+                NoneType:
+        '''
+        statement = update(self.base).where(self.base.id == id).values(
+            isEmailConfirmed=status
+        )
+        async with self.session() as session:
+            await session.execute(statement)
+            await session.commit()
+    

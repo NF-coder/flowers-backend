@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 # from datetime import datetime
 
 from api import *
-from exceptions import HttpException as BasicException
+from exceptions import BasicException
 
 # -- INIT BLOCK --
 

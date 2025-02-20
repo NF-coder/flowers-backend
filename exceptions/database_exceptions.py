@@ -1,31 +1,26 @@
 from dataclasses import dataclass
+from .basic_exception import BasicException
 
 @dataclass
-class NotUnique(Exception):
+class NotUnique(BasicException):
     '''
         Database Exception dataclass. Signals, that object, that must be unique
         does not.
-        Attributes:
-            description (str): Description of error
     '''
-    description: str = "Error occured"
+    def __post_init__(self): self.code = 400
 
 @dataclass
-class NotExist(Exception):
+class NotExist(BasicException):
     '''
         Database Exception dataclass. Signals, that object, that must exist 
         does not exist
-        Attributes:
-            description (str): Description of error
     '''
-    description: str = "Error occured"
+    def __post_init__(self): self.code = 400
 
 @dataclass
-class NoDatabaseConnection(Exception):
+class NoDatabaseConnection(BasicException):
     '''
         Database Exception dataclass. Signals, that database API can't connect to database
         does not exist
-        Attributes:
-            description (str): Description of error
     '''
-    description: str = "Error occured"
+    def __post_init__(self): self.code = 500

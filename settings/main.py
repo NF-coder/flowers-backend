@@ -15,6 +15,8 @@ class SecuritySettings():
     ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 1
     ALGORYTM = "HS512"
 
+    DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@localhost/db"
+
 @dataclass
 class AuthSettings:
     '''

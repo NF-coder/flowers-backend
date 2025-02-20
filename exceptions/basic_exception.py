@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class HttpException(Exception):
+class BasicException(Exception):
     '''
         REST API Exception dataclass, which handles in `main.py`
         Attributes:

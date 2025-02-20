@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, LargeBinary, UniqueConstraint, Text
+from sqlalchemy import String, Integer, Column, LargeBinary, UniqueConstraint, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 class Users_DB(declarative_base()):
@@ -9,7 +9,10 @@ class Users_DB(declarative_base()):
     id = Column(Integer, nullable=False, unique=True, primary_key=True)
     email = Column(String(128), nullable=False, unique=True)
     password = Column(LargeBinary(), nullable=False)
-    
+    type = Column(String(16), nullable=False)
+    isEmailConfirmed = Column(Boolean, nullable=False, default=False)
+    isSupplierStatusConfirmed = Column(Boolean, nullable=False, default=False)
+
     def __repr__(self):
         '''
             Method, that returns human-readable data about rows
@@ -20,5 +23,8 @@ class Users_DB(declarative_base()):
                         id={self.id},
                         email={self.email},
                         password={self.password},
+                        type={self.type},
+                        isEmailConfirmed={self.isEmailConfirmed},
+                        isSupplierStatusConfirmed={self.isSupplierStatusConfirmed}
                     )>
                 """

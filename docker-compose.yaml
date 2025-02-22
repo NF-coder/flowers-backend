@@ -9,3 +9,17 @@ services:
       POSTGRES_PASSWORD: "horse_ate_green_guinea_pig"
     ports:
       - "5432:5432"
+    networks:
+      - net1
+  flowers_backend:
+    container_name: flowers_backend
+    depends_on: 
+      - postgres
+    build: ./backend
+    ports:
+      - "8453:8453"
+    networks:
+      - net1
+networks:
+  net1:
+    driver: bridge

@@ -95,3 +95,62 @@ class Catalog(Basic):
                 )
         else:
             raise Developing("Sorry, this sort type is unimplemeted. We're already working on it...")
+        
+    async def get_product_by_id(
+            self,
+            id: int
+        ) -> dict:
+        return (await self.api.get_product_by_id(
+            productId=id
+        ))[0]
+    
+    async def get_products(
+            self,
+            start: int,
+            count: int,
+            sort: str
+        ) -> list:
+        if sort == "time_descending":
+            return await self.api.get_all_products_time_desc(
+                start = start,
+                count = count
+            )
+        elif sort == "time_upscending":
+            return await self.api.get_all_products_time_upsc(
+                    start = start,
+                    count = count
+                )
+        else:
+            raise Developing("Sorry, this sort type is unimplemeted. We're already working on it...")
+    
+    # BAD SEARCH FUNCTION! REWRITE IT!
+    async def search_in_title(
+            self,
+            phrase: str,
+            start: int,
+            count: int,
+            sort: str
+        ) -> list:
+        '''
+        out = []
+        for word in phrase.split():
+            out.extend(
+                await self.api.search_title_contains(phrase)
+            )
+        return list(set(sorted(out, key=lambda x: out.count(x), reverse=True)))
+        '''
+        if sort == "time_descending":
+            return await self.api.search_title_contains_time_desc(
+                phrase,
+                start,
+                count
+            )
+        elif sort == "time_upscending":
+            return await self.api.search_title_contains_time_upsc(
+                phrase,
+                start,
+                count
+            )
+        else:
+            raise Developing("Sorry, this sort type is unimplemeted. We're already working on it...")
+        

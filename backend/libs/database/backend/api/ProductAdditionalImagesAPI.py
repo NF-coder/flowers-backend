@@ -51,6 +51,20 @@ class ProductAdditionalImagesAPI(BasicAPI):
             productId=productId
         )
         async with self.session() as session:
-            out = await session.execute(statement)
+            session.add(statement)
             await session.commit()
+    
+    async def get_images_url_by_productId(
+            self,
+            productId: int
+        ) -> List[str]:
+        statement = select(self.base.imageUrl).where(self.base.productId == productId)
 
+        async with self.session() as session:
+            out = await session.execute(statement)
+
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__,
+                                                        column_mode = True
+                    )

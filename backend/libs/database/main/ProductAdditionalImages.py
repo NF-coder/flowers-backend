@@ -25,6 +25,8 @@ class ProductAdditionalImages(Basic):
             ProductAdditionalImagesDB,
             SecurityConfig.DATABASE_URL
         )
+    
+    # Использовалось на одной из итераций принятия говнокода. На данный момент не используется
     async def get_orm_image_object(self, imageUrl: str) -> ProductAdditionalImagesDB:
         '''
             Method that starts connection to database
@@ -44,5 +46,13 @@ class ProductAdditionalImages(Basic):
         for img in imageUrls:
             await self.api.add_image(
                 imageUrl=img,
+                productId=productId
+            )
+    
+    async def get_images_by_productId(
+            self,
+            productId: int
+        ):
+        return await self.api.get_images_url_by_productId(
                 productId=productId
             )

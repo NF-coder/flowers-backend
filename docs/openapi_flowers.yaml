@@ -7,15 +7,15 @@ info:
 
     Для использования бота нужно сделать отдельную авторизацию с Oauth телеги. Пока стандартный шаблон.
     
-    Last update: 00:46 13.02.24 by NF
+    Last update: 02:33 24.02.24 by NF
 servers:
-  - url: http://localhost:8453/api/v1/
+  - url: http://0.0.0.0:8453/api/v1/
     description: API version 1
 
 paths:
   /ping:
     get:
-      summary: Проверка доступности API
+      summary: Проверка доступности API +
       tags:
         - General
       responses:
@@ -32,9 +32,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     
-  /signIn:
+  /auth/signIn:
     post:
-      summary: Авторизация
+      summary: Авторизация +
       tags:
         - Security
       security:
@@ -58,9 +58,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /registerBasic:
+  /auth/registerBasic:
     post:
-      summary: Регистрация
+      summary: Регистрация +
       tags:
         - Security
       description: |
@@ -78,6 +78,9 @@ paths:
               properties:
                 email:
                   $ref: "#/components/schemas/Email"
+                password:
+                  type: string
+                  example: "12345678"
                 type:
                   type: string
                   description: |
@@ -96,10 +99,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /confirmEmail:
+  /auth/confirmEmail:
     post:
       summary: |
-        Подтверждение почты при регистрации (TODO: и её изменении)
+        Подтверждение почты при регистрации (TODO: и её изменении) +
       tags:
         - Security
       security:
@@ -132,10 +135,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   
-  /deleteUser:
+  /auth/deleteUser:
     delete:
       summary: |
-        Удаление пользователя
+        Удаление пользователя + !DO NOT USE THIS UNTIL FIX!
+      description: |
+        Может вызывать проблемы с безопасностью! Переработать!
       tags:
         - Security
       security:
@@ -146,7 +151,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignIn"
+                $ref: "#/components/schemas/DefaultPing"
         default:
           description: Error
           content:
@@ -480,9 +485,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /getCatalog:
+  /catalog/getCatalog:
     get:
-      summary: Каталог товаров
+      summary: Каталог товаров (+-)
       tags:
         - Catalog
       parameters:
@@ -528,9 +533,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /search:
+  /catalog/search:
     get:
-      summary: Каталог товаров
+      summary: Каталог товаров (+)
       tags:
         - Catalog
       parameters:
@@ -610,9 +615,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /getCatalogItemDetails:
+  /catalog/getCatalogItemDetails:
     get:
-      summary: Получение деталей о товаре
+      summary: Получение деталей о товаре (-)
       tags:
         - Catalog
       parameters:
@@ -638,7 +643,7 @@ paths:
   /admin/listSuppliersRequests:
     get:
       summary: |
-        Список заявок на добавление поставщиков
+        Список заявок на добавление поставщиков + 
       tags:
         - Admin
       security:
@@ -683,24 +688,25 @@ paths:
   /admin/approveSupplierRequest:
     post:
       summary: |
-        Одобрение заявки от поставщика
+        Одобрение заявки от поставщика +
       description: |
         Передайте что-либо из данных пользователя: id или email
       tags:
         - Admin
       security:
         - bearerAuth: []
-      parameters:
-        - in: query
-          name: email
-          required: false
-          schema:
-            $ref: "#/components/schemas/Email"
-        - in: query
-          name: userId
-          required: false
-          schema:
-            $ref: "#/components/schemas/UserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: "#/components/schemas/Email"
+                id: 
+                  $ref: "#/components/schemas/UserId"
+        
       responses:
         200:
           description: Responce with data
@@ -718,7 +724,7 @@ paths:
   /admin/deleteUser:
     delete:
       summary: |
-        Удаление пользователя
+        Удаление пользователя (NO ENDPOINT UNTIL BUGFIX)
       description: |
         Передайте что-либо из данных пользователя: id или email
       tags:
@@ -750,9 +756,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   
-  /addProduct:
+  /supplier/addProduct:
     post:
-      summary: Добавление товара
+      summary: Добавление товара (+)
       tags:
         - Supplier
       security:
@@ -777,9 +783,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /editProduct:
+  /supplier/editProduct:
     put:
-      summary: Изменение товара
+      summary: Изменение товара (NO ENDPOINT UNTIL BUGFIX)
       tags:
         - Supplier
       security:
@@ -809,9 +815,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /deleteProduct:
+  /supplier/deleteProduct:
     delete:
-      summary: Удаление товара
+      summary: Удаление товара (NO ENDPOINT UNTIL BUGFIX)
       tags:
         - Supplier
       security:
@@ -835,9 +841,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /myProductsList:
+  /supplier/myProductsList:
     get:
-      summary: Удаление товара
+      summary: Просмотр моих товаров (+-)
       tags:
         - Supplier
       security:
@@ -863,7 +869,7 @@ paths:
           schema:
             type: string
             description: |
-             Один из вариантов: time_upscending, time_descending, rank_upscending, rank_descending, timesBought_upscending, timesBought_descending
+             Один из вариантов: time_upscending(+), time_descending(+), rank_upscending(-), rank_descending(-), timesBought_upscending(-), timesBought_descending(-)
             example: default
       responses:
         200:

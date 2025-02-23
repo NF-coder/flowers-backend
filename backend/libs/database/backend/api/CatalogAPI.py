@@ -47,6 +47,37 @@ class CatalogAPI(BasicAPI):
             await session.commit()
         return statement.id
     
+
+    async def get_all_products_time_desc(self, start: int, count: int) -> int:
+        statement = select(self.base)\
+            .order_by(
+                    self.base.id.desc()
+            ).offset(start).fetch(count)
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+
+    async def get_all_products_time_upsc(self, start: int, count: int) -> int:
+        statement = select(self.base)\
+            .order_by(
+                    self.base.id
+            ).offset(start).fetch(count)
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+
+
+
     async def get_my_products_time_desc(self, userId: int, start: int, count: int) -> int:
         statement = select(self.base)\
             .where(
@@ -69,6 +100,62 @@ class CatalogAPI(BasicAPI):
                 self.base.supplierId == userId,
             ).order_by(
                     self.base.id
+            ).offset(start).fetch(count)
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+
+    async def get_product_by_id(self, productId: int) -> int:
+        statement = select(self.base)\
+            .where(
+                self.base.id == productId,
+            )
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+
+    async def search_title_contains_time_upsc(
+            self,
+            fragment: str,
+            start: int,
+            count: int
+        ) -> dict:
+        statement = select(self.base)\
+            .where(
+                self.base.title.contains(fragment)
+            ).order_by(
+                    self.base.id
+            ).offset(start).fetch(count)
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+    
+    async def search_title_contains_time_desc(
+            self,
+            fragment: str,
+            start: int,
+            count: int
+        ) -> dict:
+        statement = select(self.base)\
+            .where(
+                self.base.title.contains(fragment)
+            ).order_by(
+                    self.base.id.desc()
             ).offset(start).fetch(count)
 
         async with self.session() as session:

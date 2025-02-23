@@ -1,1 +1,5 @@
 from .supplier.myProductsListSerializer import myProductsListSerializer
+
+from .catalog.getCatalogItemDetailsSerializer import getCatalogItemDetailsSerializer
+from .catalog.getCatalogSerializer import getCatalogSerializer
+from .catalog.searchSerializer import searchSerializer

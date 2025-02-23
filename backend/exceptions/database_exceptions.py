@@ -24,6 +24,14 @@ class NotEnoudhArguments(BasicException):
     '''
     def __post_init__(self): self.code = 400
 
+@dataclass
+class Developing(BasicException):
+    '''
+        Database Exception dataclass. Signals, that there is a feature, that we cant handle, but we're currently working on it.
+    '''
+    def __post_init__(self): self.code = 500
+
+
 
 @dataclass
 class NoDatabaseConnection(BasicException):

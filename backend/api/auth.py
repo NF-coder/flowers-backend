@@ -125,6 +125,7 @@ async def confirmEmail(
 
 
 # Can create security issues!
+# DO NOT USE THIS ENDPOINT BEFORE I FIX PROBLEMS WITH DB
 @router.delete("/deleteUser", tags = ["auth"], status_code=201)
 async def deleteUser(
         request_header: Annotated[deleteUserModels.RequestModel, Header()],

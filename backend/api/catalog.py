@@ -14,46 +14,12 @@ from api.serializers import myProductsListSerializer
 from exceptions.basic_exception import BasicException
 
 router = APIRouter(
-    prefix=f"/api/v{MainConfig.API_VERSION}/supplier",
+    prefix=f"/api/v{MainConfig.API_VERSION}/catalog",
     tags=["supplier"]
 )
 
-@router.post("/addProduct", tags = ["supplier"], status_code=200)
-async def addProduct(
-        request_header: Annotated[addProductModels.RequestHeaderModel, Header()],
-        request_body: Annotated[addProductModels.RequestBodyModel, Body()],
-    ) -> addProductModels.ResponceSchema:
-
-    decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
-    )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
-    
-    API = await Catalog.start()
-    productId = await API.add_product(
-        title=request_body.title,
-        titleImageUrl=request_body.titleImage,
-        costNum=request_body.cost.costNum,
-        description=request_body.description,
-        authorId=decoded_auth_info.id,
-    )
-
-    ImagesAPI = await ProductAdditionalImages.start()
-    ImagesAPI.add_images(
-        imageUrls=request_body.additionalImages,
-        productId=productId
-    )
-
-    return {"status": "ok"}
-
-@router.get("/myProductsList", tags = ["supplier"], status_code=200)
-async def myProductsList(
+@router.get("/getCatalogItemDetails", tags = ["catalog"], status_code=200)
+async def getCatalogItemDetails(
         request_header: Annotated[myProductsListModels.RequestHeaderModel, Header()],
         request_query: Annotated[myProductsListModels.RequestQueryModel, Query()],
     ) -> List[myProductsListModels.ResponceSchemaItem]:

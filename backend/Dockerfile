@@ -15,6 +15,8 @@ RUN pip install -r reqrments.txt
 #RUN sudo systemctl restart nginx
 
 EXPOSE 8453
-EXPOSE 80
+
+# for nginx
+#EXPOSE 80
 
 CMD fastapi run --port 8453 --host 0.0.0.0

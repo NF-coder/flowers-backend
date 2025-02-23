@@ -17,6 +17,9 @@ from fastapi.responses import JSONResponse
 from api import *
 from exceptions import BasicException
 
+import asyncio
+from libs.database import Catalog, ProductAdditionalImages, Users
+
 # -- INIT BLOCK --
 
 app = FastAPI()
@@ -32,7 +35,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(admin.router)
-# app.include_router(moex_info.router)
+app.include_router(supplier.router)
 
 # -- MAIN BLOCK --
 
@@ -97,4 +100,5 @@ async def send():
     '''
     return {"status": "ok"}
 
-if __name__ == "__main__": app.run()
+if __name__ == "__main__":
+    app.run()

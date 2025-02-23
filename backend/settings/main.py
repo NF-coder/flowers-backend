@@ -15,7 +15,10 @@ class SecuritySettings():
     ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 1
     ALGORYTM = "HS512"
 
-    DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@postgres/db"
+    # uncomment this before building container!
+    # DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@postgres/db"
+
+    DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@localhost/db"
 
 @dataclass
 class AuthSettings:

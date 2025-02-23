@@ -7,6 +7,8 @@ class Middleware_utils:
         '''
             Implements translation of result of ORM responce to dict
             ### NOTE: describe it later. And also rewrite it
+
+            I really need this function? Maybe it's an error to create it
         '''
         # TODO: implement more easier solution from https://stackoverflow.com/questions/1958219/how-to-convert-sqlalchemy-row-object-to-a-python-dict
         

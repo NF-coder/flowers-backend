@@ -1,5 +1,5 @@
-from backend.libs.database import Users
-from backend.libs.tokens import Tokens
+from libs.database import Users
+from libs.tokens import Tokens
 
 import asyncio
 

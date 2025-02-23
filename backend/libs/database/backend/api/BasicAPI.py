@@ -28,7 +28,7 @@ class BasicAPI:
             self.base = base_fields
             self.engine = create_async_engine(base_url)
 
-            await self.init_db()
+            await self.init_db() # do i really need this every time?
 
             self.session = sessionmaker(
                 bind = self.engine,
@@ -37,10 +37,10 @@ class BasicAPI:
             )
 
         except Exception as exc:
+            print(exc)
             raise NoDatabaseConnection(
                 description="Error while connecting to database! [DB_API]"
             )
-            #print(f"Error while API init:\n{traceback.format_exc()}\n")
 
         return self
     

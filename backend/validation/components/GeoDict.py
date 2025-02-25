@@ -6,15 +6,23 @@ from .BeraerTokenTemplate import BearerTokenTemplate
 from exceptions import BasicException
 
 
-class CostDict(BaseModel):
+class GeoDict(BaseModel):
     '''
         TODO: docstring
     '''
-    currency: str = Field(
-        description="Currency of cost",
-        examples="RUB",
+    Country: str = Field(
         max_length=128
-    ) # и потом я крутейше отброшу это поле)
-    costNum: int = Field(
-        description="Cost of product"
     )
+    City: str = Field(
+        max_length=128
+    )
+    Street: str = Field(
+        max_length=128
+    )
+    Building: str = Field(
+        max_length=128
+    )
+    Flat: str = Field(
+        max_length=128
+    )
+    

@@ -12,7 +12,7 @@ class ProductAdditionalImagesDB(declarative_base()):
     id = Column(Integer, nullable=False, unique=True, primary_key=True)
     imageUrl = Column(String(1024), nullable=False)
 
-    productId = Column(Integer, nullable=False)
+    productId = Column(Integer, nullable=False) # FK
 
     def __repr__(self):
         '''

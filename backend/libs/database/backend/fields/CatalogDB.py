@@ -17,7 +17,7 @@ class CatalogDB(declarative_base()):
     titleImage = Column(String(1024), nullable=False)
 
     # TODO: refactor it to CompaniesInfo database
-    supplierId = Column(Integer, nullable=False)
+    supplierId = Column(Integer, nullable=False) # FK
 
     # We use only RUB this time.. So there's a problem for future developers)
     cost = Column(Integer, nullable=False)

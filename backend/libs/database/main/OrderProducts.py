@@ -11,13 +11,13 @@ from .Basic import Basic
 from .ProductAdditionalImages import ProductAdditionalImages
 from .Users import Users
 
-from ..backend.api.OrderAPI import OrderAPI
-from ..backend.fields.OrderDB import OrderDB
+from ..backend.api.OrderProductsAPI import OrderProductsAPI
+from ..backend.fields.OrderProductsDB import OrderProductsDB
 
 class OrderProducts(Basic):
     @classmethod
     async def start(self) -> Self:
-        return await self.start_(OrderAPI, OrderDB, SecurityConfig.DATABASE_URL)
+        return await self.start_(OrderProductsAPI, OrderProductsDB, SecurityConfig.DATABASE_URL)
     
 
     async def add_products(
@@ -36,3 +36,20 @@ class OrderProducts(Basic):
                 )
             )
         return out
+    
+    async def get_by_orderId(
+            self,
+            orderId: int,
+        ) -> List[dict]:
+        return await self.api.get_by_orderId(
+                orderId=orderId
+            )
+
+    async def get_by_productId(
+            self,
+            productId: int,
+        ) -> List[dict]:
+        return await self.api.get_by_productId(
+                productId=productId
+            )
+

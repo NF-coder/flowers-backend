@@ -30,7 +30,7 @@ class OrderAPI(BasicAPI):
 
         statement = self.base(
             costumerFirstName=firstName,
-            costumerSecindName=secondName,
+            costumerSecondName=secondName,
             comment=comment,
             phoneNumber=phoneNumber,
             geoId=geoId,

@@ -6,20 +6,13 @@ from exceptions import BasicException
 from ..components.GeoDict import GeoDict
 from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
-
-class OrderInfoHeader(BearerTokenTemplate):
+class CancelOrderHeader(BearerTokenTemplate):
     pass
 
-class OrderInfoQuery(BaseModel):
+class CancelOrderBody(BaseModel):
     orderId: int
 
 class ResponceSchema(BaseModel):
-    orderId: int
-    adress: GeoDict
-    orderStatus: str
-    orderCreatedTime: int
-    customerPhone: str
-    customerFirstName: str
-    customerSecondName: str
-    comment: str
-    productIdArray: List[int]
+    status: str = Field(
+        default="ok"
+    )

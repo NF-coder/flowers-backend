@@ -2,9 +2,9 @@ from fastapi import APIRouter, Header, Body, Query
 from typing import Dict, Any, Annotated, List
 
 from settings import MainConfig
-from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels
+from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels, CancelOrderModels, OrdersForMeModels
 
-from libs.database import Order, Geo, OrderProducts
+from libs.database import Order, Geo, OrderProducts, Catalog
 
 from libs.tokens import Tokens
 
@@ -71,7 +71,7 @@ async def orderInfo(
     )
 
     serializer = await orderInfoSerializer.start()
-    return await serializer.serialize(orderInfo)
+    return await serializer.serialize(orderInfo[0])
 
 
 @router.get("/myActiveOrders", tags = ["catalog"], status_code=202)
@@ -91,5 +91,71 @@ async def myActiveOrders(
     serializer = await orderInfoSerializer.start()
     out = []
     for item in orderInfo:
+        print(item)
         out.append(await serializer.serialize(item))
     return out
+
+
+@router.post("/cancelOrder", tags = ["order"], status_code=202)
+async def cancelOrder(
+        request_header: Annotated[CancelOrderModels.CancelOrderHeader, Header()],
+        request_body: Annotated[CancelOrderModels.CancelOrderBody, Body()],
+    ) -> CancelOrderModels.ResponceSchema:
+
+    decoded_auth_info = await Tokens.decode_acess_token(
+        request_header.Authorization
+    )
+
+    OrderAPI = await Order.start()
+    await OrderAPI.cancel_by_id(
+        id=request_body.orderId
+    )
+
+    return {"status": "ok"}
+
+
+
+
+
+
+
+
+# fastfunc from supplier
+'''
+@router.get("/ordersForMe", tags = ["supplier"], status_code=200)
+async def ordersForMe(
+        request_header: Annotated[OrdersForMeModels.OrdersForMeHeader, Header()],
+    ) -> List[OrdersForMeModels.ResponceItemSchema]:
+
+    decoded_auth_info = await Tokens.decode_acess_token(
+        request_header.Authorization
+    )
+
+    if not decoded_auth_info.type == "supplier" and\
+          not decoded_auth_info.isSupplierStatusConfirmed:
+        raise BasicException(
+            code=400,
+            description="You're not supplier or your supplier status is unconfirmed"
+        )
+    CatalogAPI = await Catalog.start()
+    myProductsArr = await CatalogAPI.get_my_products(userId=decoded_auth_info.id, start=0, count=100, sort="time_descending")
+
+    OrderProductsAPI = await OrderProducts.start()
+    orderProductsInfoArr = []
+    for productId in myProductsArr:
+        orderProductsInfoArr.extend(await OrderProductsAPI.get_by_productId(
+            productId=productId
+        ))
+    
+    orderProductsInfoArr = list(set([
+        elem["orderId"] for elem in orderProductsInfoArr
+    ]))
+
+
+    serializer = await orderInfoSerializer.start()
+    out = []
+    for item in orderInfo:
+        print(item)
+        out.append(await serializer.serialize(item))
+    return out
+'''

@@ -11,28 +11,28 @@ class orderInfoSerializer:
 
     async def serialize(self, data):
         
-        adress = await self.GeoAPI.get_by_id(
+        adress = (await self.GeoAPI.get_by_id(
             id=data["geoId"]
-        )
+        ))[0]
 
-        productsArr = await self.OrderProducts.get_by_orderId(
+        productsArr = await self.OrderProductsAPI.get_by_orderId(
             orderId=data["id"]
         )
 
         return {
             "orderId": data["id"],
             "adress": {
-                "Contry": adress["country"],
+                "Country": adress["country"],
                 "City": adress["city"],
                 "Street": adress["street"],
                 "Building": adress["building"],
                 "Flat": adress["flat"]
             },
             "orderStatus": data["orderStatus"],
-            "orderCreatedTime": data["orderCreatedTime"],
+            "orderCreatedTime": data["orderCreatedTime"].timestamp()//1,
             "customerPhone": data["phoneNumber"],
-            "customerFirstName": data["customerFirstName"],
-            "customerSecondName": data["customerSecondName"],
+            "customerFirstName": data["costumerFirstName"],
+            "customerSecondName": data["costumerSecondName"],
             "comment": data["comment"],
             "productIdArray": [elem["productId"] for elem in productsArr]
         }

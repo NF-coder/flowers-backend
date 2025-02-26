@@ -11,13 +11,13 @@ from .Basic import Basic
 from .ProductAdditionalImages import ProductAdditionalImages
 from .Users import Users
 
-from ..backend.api.OrderAPI import OrderAPI
-from ..backend.fields.OrderDB import OrderDB
+from ..backend.api.GeoAPI import GeoAPI
+from ..backend.fields.GeoDB import GeoDB
 
 class Geo(Basic):
     @classmethod
     async def start(self) -> Self:
-        return await self.start_(OrderAPI, OrderDB, SecurityConfig.DATABASE_URL)
+        return await self.start_(GeoAPI, GeoDB, SecurityConfig.DATABASE_URL)
     
 
     async def add_geo(

@@ -29,7 +29,7 @@ class CreateOrderBody(BaseModel):
 
     ProductIdArray: List[int] = List[Field(examples=[1,2,3])]
 
-class ResponceSchema(BearerTokenTemplate):
+class ResponceSchema(BaseModel):
     status: str = Field(
         default="ok"
     )

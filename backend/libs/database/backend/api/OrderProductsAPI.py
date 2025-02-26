@@ -47,4 +47,15 @@ class OrderProductsAPI(BasicAPI):
                                                         out,
                                                         table_name = self.base.__name__
                     )
+    async def get_by_productId(
+            self,
+            productId: int
+        ) -> dict:
 
+        statement = select(self.base).where(self.base.productId == productId)
+        async with self.session() as session:
+            out = await session.execute(statement)
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )

@@ -7,13 +7,10 @@ from ..components.GeoDict import GeoDict
 from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
 
-class OrderInfoHeader(BearerTokenTemplate):
+class OrdersForMeHeader(BearerTokenTemplate):
     pass
 
-class OrderInfoQuery(BaseModel):
-    orderId: int
-
-class ResponceSchema(BaseModel):
+class ResponceItemSchema(BaseModel):
     orderId: int
     adress: GeoDict
     orderStatus: str

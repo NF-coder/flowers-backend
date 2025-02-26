@@ -10,10 +10,8 @@ from ..components.BeraerTokenTemplate import BearerTokenTemplate
 class MyActiveOrdersHeader(BearerTokenTemplate):
     pass
 
-class ResponceItemSchema(BearerTokenTemplate):
-    orderId: str = Field(
-        default="ok"
-    )
+class ResponceItemSchema(BaseModel):
+    orderId: int
     adress: GeoDict
     orderStatus: str
     orderCreatedTime: int

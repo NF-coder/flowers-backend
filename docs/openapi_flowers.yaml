@@ -7,9 +7,9 @@ info:
 
     Для использования бота нужно сделать отдельную авторизацию с Oauth телеги. Пока стандартный шаблон.
     
-    Last update: 02:33 24.02.24 by NF
+    Last update: 02:30 26.02.24 by NF
 servers:
-  - url: http://0.0.0.0:8453/api/v1/
+  - url: http://localhost:8453/api/v1/
     description: API version 1
 
 paths:
@@ -183,8 +183,6 @@ paths:
                   $ref: "#/components/schemas/BirthDate"
                 Gender:
                   $ref: "#/components/schemas/Gender"
-                Email:
-                  $ref: "#/components/schemas/Email"
       responses:
         200:
           description: Responce with data
@@ -278,10 +276,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-                
-  /orderInfo:
+  /order/myActiveOrders:
     get:
-      summary: Информация о заказе по идентификатору
+      summary: Информация об активных заказах пользователя (+)
+      tags:
+        - User Order
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderStatus"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /order/orderInfo:
+    get:
+      summary: Информация о заказе по идентификатору (+)
       tags:
         - User Order
       security:
@@ -306,9 +325,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /createOrder:
+  /order/createOrder:
     post:
-      summary: Создание заказа
+      summary: Создание заказа (+)
       tags:
         - User Order
       security:
@@ -350,21 +369,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
                 
-  /cancelOrder:
+  /order/cancelOrder:
     post:
-      summary: Отмена заказ
+      summary: Отмена заказа (+)
       description: |
         Возможность отменить заказ до какого-либо момента
       tags:
         - User Order
       security:
         - bearerAuth: []
-      parameters:
-        - in: query
-          name: orderId
-          required: true
+      requestBody:
+        required: true
+        content:
+         application/json:
           schema:
-            $ref: "#/components/schemas/OrderId"
+            type: object
+            properties:
+              orderId:
+                $ref: "#/components/schemas/OrderId"
       responses:
         200:
           description: Responce with data
@@ -782,7 +804,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+  
+  /supplier/ordersForMe:
+    get:
+      summary: Заказы, которые сделали пользователи
+      tags:
+        - Supplier
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Responce with data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrderStatus"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
   /supplier/editProduct:
     put:
       summary: Изменение товара (NO ENDPOINT UNTIL BUGFIX)
@@ -934,17 +979,17 @@ components:
       maxLength: 64 # в падлу писать regex
       example: 59.939095, 30.315868
     UserId:
-      type: string
+      type: integer
       description: Номер заказа
-      example: 000-000-000-001
+      example: 1
     OrderId:
-      type: string
+      type: integer
       description: Номер заказа
-      example: 000-000-000-001
+      example: 1
     ProductId:
-      type: string
+      type: integer
       description: Номер товара
-      example: 000-000-000-001
+      example: 1
     Comment:
       type: string
       description: Комментарий от заказчика
@@ -954,9 +999,9 @@ components:
       type: object
       description: Адрес гоя
       properties:
-        Contry:
+        Country:
           type: string
-          description: "Contry of costumer"
+          description: "Country of costumer"
           example: "Russia"
         City:
           type: string
@@ -1030,9 +1075,9 @@ components:
           description: Статус заказа # maybe we must use enum to create pretty bar (or add smth like stage number)
           example: Обрабатывается...
         orderCreatedTime:
-          type: string
-          description: Время создания заказа
-          example: MM-HH DD-MM
+          type: integer
+          description: timestamp
+          example: 1903093
         customerPhone:
           $ref: "#/components/schemas/PhoneNumber"
         customerFirstName:

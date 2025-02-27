@@ -984,7 +984,7 @@ paths:
                 $ref: "#/components/schemas/Error"
   /supplier/supplierReport:
     get:
-      summary: Получение отчёта о продажах
+      summary: Получение отчёта о продажах (+)
       tags:
         - Supplier
       security:

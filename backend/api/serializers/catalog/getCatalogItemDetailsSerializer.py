@@ -10,10 +10,10 @@ class getCatalogItemDetailsSerializer:
        return self
 
     async def serialize(self, data):
-        print(data)
         imagesUrls = await self.AdditionalImagesAPI.get_images_by_productId(
             productId=data["id"]
         )
+        print(imagesUrls)
         email = (await self.UsersAPI.get_by_id(
             id=data["supplierId"]
         ))["email"]
@@ -32,5 +32,8 @@ class getCatalogItemDetailsSerializer:
             "reviews": { #fake block
                 "rank": 4.0,
                 "reviewsCount": 10
-            }
+            },
+            "description": data["description"],
+            "boughtTimesCounter": 100, # fake
+            "additionalImages": [image["imageUrl"] for image in imagesUrls]
         }

@@ -58,13 +58,11 @@ class ProductAdditionalImagesAPI(BasicAPI):
             self,
             productId: int
         ) -> List[str]:
-        statement = select(self.base.imageUrl).where(self.base.productId == productId)
+        statement = select(self.base).where(self.base.productId == productId)
 
         async with self.session() as session:
             out = await session.execute(statement)
-
         return await Middleware_utils.db_answer_to_dict(
                                                         out,
-                                                        table_name = self.base.__name__,
-                                                        column_mode = True
+                                                        table_name = self.base.__name__
                     )

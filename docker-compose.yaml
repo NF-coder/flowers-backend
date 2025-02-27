@@ -13,11 +13,21 @@ services:
       - net1
   flowers_backend:
     container_name: flowers_backend
-    depends_on: 
+    depends_on:
+      - upload-images
       - postgres
     build: ./backend
     ports:
       - "8453:8453"
+    networks:
+      - net1
+  upload-images:
+    container_name: uploadImages
+    depends_on: 
+      - postgres
+    build: ./imagesUploader
+    ports:
+      - "8450:8450"
     networks:
       - net1
 networks:

@@ -1,4 +1,4 @@
-from libs.database import Geo, OrderProducts
+from libs.database import Geo
 
 class orderInfoSerializer:
     @classmethod
@@ -6,7 +6,6 @@ class orderInfoSerializer:
        self = cls()
 
        self.GeoAPI = await Geo.start()
-       self.OrderProductsAPI = await OrderProducts.start()
        return self
 
     async def serialize(self, data):
@@ -14,10 +13,6 @@ class orderInfoSerializer:
         adress = (await self.GeoAPI.get_by_id(
             id=data["geoId"]
         ))[0]
-
-        productsArr = await self.OrderProductsAPI.get_by_orderId(
-            orderId=data["id"]
-        )
 
         return {
             "orderId": data["id"],
@@ -34,5 +29,5 @@ class orderInfoSerializer:
             "customerFirstName": data["costumerFirstName"],
             "customerSecondName": data["costumerSecondName"],
             "comment": data["comment"],
-            "productIdArray": [elem["productId"] for elem in productsArr]
+            "productIdArray": [data["productId"]]
         }

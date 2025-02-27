@@ -23,6 +23,7 @@ class Order(Basic):
     async def create_order(self,
         geoId: int,
         userId: int,
+        productId:int,
         firstName: str,
         secondName: str,
         comment: str,
@@ -35,7 +36,8 @@ class Order(Basic):
             firstName=firstName,
             secondName=secondName,
             comment=comment,
-            phoneNumber=phoneNumber
+            phoneNumber=phoneNumber,
+            productId=productId
         )
     
     async def get_by_id(
@@ -44,6 +46,14 @@ class Order(Basic):
     ) -> dict:
         return await self.api.get_by_id(
             id=id
+        )
+    
+    async def get_by_productId(
+        self,
+        productId: int
+    ) -> dict:
+        return await self.api.get_by_productId(
+            productId=productId
         )
     
     async def set_status_by_id(
@@ -80,4 +90,17 @@ class Order(Basic):
     ) -> dict:
         return await self.api.get_active_orders_by_userId(
             userId=userId
+        )
+    
+    async def get_all_active(
+        self
+    ) -> dict:
+        return await self.api.get_all_active_orders()
+
+    async def get_active_with_productId(
+        self,
+        productId: int
+    ) -> dict:
+        return await self.api.get_all_active_orders_with_productId(
+            productId = productId
         )

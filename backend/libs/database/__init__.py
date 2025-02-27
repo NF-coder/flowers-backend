@@ -5,4 +5,3 @@ from .main.ProductAdditionalImages import ProductAdditionalImages
 # fast code
 from .main.Order import Order
 from .main.Geo import Geo
-from .main.OrderProducts import OrderProducts

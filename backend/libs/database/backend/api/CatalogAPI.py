@@ -81,7 +81,7 @@ class CatalogAPI(BasicAPI):
     async def get_my_products_time_desc(self, userId: int, start: int, count: int) -> int:
         statement = select(self.base)\
             .where(
-                self.supplierId.userId == userId,
+                self.base.supplierId == userId,
             ).order_by(
                     self.base.id.desc()
             ).offset(start).fetch(count)

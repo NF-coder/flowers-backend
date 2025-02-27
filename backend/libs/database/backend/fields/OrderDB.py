@@ -28,6 +28,7 @@ class OrderDB(declarative_base()):
 
     geoId = Column(Integer, nullable=False) # FK
     userId = Column(Integer, nullable=False) # FK
+    productId = Column(Integer, nullable=False) # FK
 
     orderStatus = Column(String(32), nullable=False, default="Обрабатывается...")
     orderCreatedTime = Column(DateTime, default=datetime.utcnow)
@@ -49,6 +50,7 @@ class OrderDB(declarative_base()):
                         isFinished={self.isFinished},
                         isCanceled={self.isCanceled},
                         geoId={self.geoId},
-                        orderCreatedTime={self.orderCreatedTime}
+                        orderCreatedTime={self.orderCreatedTime},
+                        productId={self.productId}
                     )>
                 """

@@ -21,6 +21,7 @@ class OrderAPI(BasicAPI):
 
             geoId: int,
             userId: int,
+            productId: int,
 
             firstName: str,
             secondName: str,
@@ -34,7 +35,8 @@ class OrderAPI(BasicAPI):
             comment=comment,
             phoneNumber=phoneNumber,
             geoId=geoId,
-            userId=userId
+            userId=userId,
+            productId=productId
         )
         async with self.session() as session:
             session.add(statement)
@@ -48,6 +50,19 @@ class OrderAPI(BasicAPI):
         ) -> dict:
 
         statement = select(self.base).where(self.base.id == id)
+        async with self.session() as session:
+            out = await session.execute(statement)
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+    
+    async def get_by_productId(
+            self,
+            productId: int
+        ) -> dict:
+
+        statement = select(self.base).where(self.base.productId == productId)
         async with self.session() as session:
             out = await session.execute(statement)
         return await Middleware_utils.db_answer_to_dict(
@@ -124,6 +139,46 @@ class OrderAPI(BasicAPI):
                 self.base.userId == userId,
                 self.base.isCanceled == False,
                 self.base.isFinished == False
+                )
+            )
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+    
+    async def get_all_active_orders(
+            self
+        ) -> None:
+
+        statement = select(self.base).where(
+            and_(
+                self.base.isCanceled == False,
+                self.base.isFinished == False
+                )
+            )
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+
+        return await Middleware_utils.db_answer_to_dict(
+                                                        out,
+                                                        table_name = self.base.__name__
+                    )
+    
+    async def get_all_active_orders_with_productId(
+            self,
+            productId: int
+        ) -> dict:
+
+        statement = select(self.base).where(
+            and_(
+                self.base.isCanceled == False,
+                self.base.isFinished == False,
+                self.base.productId == productId
                 )
             )
 

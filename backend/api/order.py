@@ -2,9 +2,9 @@ from fastapi import APIRouter, Header, Body, Query
 from typing import Dict, Any, Annotated, List
 
 from settings import MainConfig
-from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels, CancelOrderModels, OrdersForMeModels
+from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels, CancelOrderModels
 
-from libs.database import Order, Geo, OrderProducts, Catalog
+from libs.database import Order, Geo, Catalog
 
 from libs.tokens import Tokens
 
@@ -37,21 +37,16 @@ async def createOrder(
     )
 
     OrderAPI = await Order.start()
-    orderId = await OrderAPI.create_order(
-        geoId=geoId,
-        userId=decoded_auth_info.id,
-        firstName=request_body.FirstName,
-        secondName=request_body.SecondName,
-        comment=request_body.Comment,
-        phoneNumber=request_body.PhoneNumber
-    )
-
-    OrderProductsAPI = await OrderProducts.start()
-    productsArr = await OrderProductsAPI.add_products(
-        userId=decoded_auth_info.id,
-        orderId=orderId,
-        productIds=request_body.ProductIdArray
-    )
+    for productId in request_body.ProductIdArray:
+        await OrderAPI.create_order(
+            geoId=geoId,
+            userId=decoded_auth_info.id,
+            firstName=request_body.FirstName,
+            secondName=request_body.SecondName,
+            comment=request_body.Comment,
+            phoneNumber=request_body.PhoneNumber,
+            productId=productId
+        )
 
     return {"status": "ok"}
 
@@ -112,50 +107,3 @@ async def cancelOrder(
     )
 
     return {"status": "ok"}
-
-
-
-
-
-
-
-
-# fastfunc from supplier
-'''
-@router.get("/ordersForMe", tags = ["supplier"], status_code=200)
-async def ordersForMe(
-        request_header: Annotated[OrdersForMeModels.OrdersForMeHeader, Header()],
-    ) -> List[OrdersForMeModels.ResponceItemSchema]:
-
-    decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
-    )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
-    CatalogAPI = await Catalog.start()
-    myProductsArr = await CatalogAPI.get_my_products(userId=decoded_auth_info.id, start=0, count=100, sort="time_descending")
-
-    OrderProductsAPI = await OrderProducts.start()
-    orderProductsInfoArr = []
-    for productId in myProductsArr:
-        orderProductsInfoArr.extend(await OrderProductsAPI.get_by_productId(
-            productId=productId
-        ))
-    
-    orderProductsInfoArr = list(set([
-        elem["orderId"] for elem in orderProductsInfoArr
-    ]))
-
-
-    serializer = await orderInfoSerializer.start()
-    out = []
-    for item in orderInfo:
-        print(item)
-        out.append(await serializer.serialize(item))
-    return out
-'''

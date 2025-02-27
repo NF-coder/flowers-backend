@@ -18,7 +18,7 @@ class SecuritySettings():
     # uncomment this before building container!
     DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@postgres/db"
 
-    # for local database
+    # uncomment for local database
     #DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@localhost/db"
 
 @dataclass

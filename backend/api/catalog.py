@@ -19,7 +19,6 @@ router = APIRouter(
 )
 
 # It not works. Why?
-'''
 @router.get("/getCatalogItemDetails", tags = ["catalog"], status_code=200)
 async def getCatalogItemDetails(
         request_query: Annotated[getCatalogItemDetailsModels.RequestModel, Query()],
@@ -32,7 +31,7 @@ async def getCatalogItemDetails(
 
     serializer = await getCatalogItemDetailsSerializer.start()
     return await serializer.serialize(res)
-'''
+
 
 @router.get("/getCatalog", tags = ["catalog"], status_code=200)
 async def getCatalogItemDetails(

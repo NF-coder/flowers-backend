@@ -14,11 +14,10 @@ from fastapi.responses import JSONResponse
 # from typing import Dict, Any
 # from datetime import datetime
 
-from api import *
+from api import auth, admin, catalog, order
 from exceptions import BasicException
 
 import asyncio
-from libs.database import Catalog, ProductAdditionalImages, Users
 
 # -- INIT BLOCK --
 
@@ -35,7 +34,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(admin.router)
-app.include_router(supplier.router)
+#app.include_router(supplier.router)
 app.include_router(catalog.router)
 app.include_router(order.router)
 

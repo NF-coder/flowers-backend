@@ -5,6 +5,8 @@ from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
 from exceptions import BasicException
 
+from libs.middleware.logic.schemas.AdminSchemas import *
+
 class RequestHeaderModel(BearerTokenTemplate):
     '''
         Request headers validator for /auth/listSuppliersRequests
@@ -30,11 +32,17 @@ class ResponceSchemaItem(BaseModel):
             id (int): user's id
     '''
     email: str = Field(
-        examples="example@example.com",
-        description="User's email"
+        examples=["example@example.com"],
+        description="User email"
     )
     id: int = Field(
-        examples=1,
-        description="User's id"
+        examples=[1],
+        description="User id"
     )
 
+    @staticmethod
+    async def parse(UserObj: UserSchema) -> Self:
+        return ResponceSchemaItem(
+            email=UserObj.email,
+            id=UserObj.userId
+        )

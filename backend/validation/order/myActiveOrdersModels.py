@@ -6,6 +6,8 @@ from exceptions import BasicException
 from ..components.GeoDict import GeoDict
 from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
+from libs.middleware.logic.schemas.OrderSchemas import *
+
 
 class MyActiveOrdersHeader(BearerTokenTemplate):
     pass
@@ -19,4 +21,24 @@ class ResponceItemSchema(BaseModel):
     customerFirstName: str
     customerSecondName: str
     comment: str
-    productIdArray: List[int]
+    productId: int
+
+    @staticmethod
+    async def parse(OrderObj: OrderSchema):
+        return ResponceItemSchema(
+            orderId=OrderObj.orderId,
+            adress=GeoDict(
+                Country=OrderObj.country,
+                City=OrderObj.city,
+                Street=OrderObj.street,
+                Building=OrderObj.building,
+                Flat=OrderObj.flat
+            ),
+            orderStatus=OrderObj.orderStatus,
+            orderCreatedTime=OrderObj.orderCreatedTime.timestamp()//1,
+            costomerPhone=OrderObj.phoneNumber,
+            customerFirstName=OrderObj.costumerFirstName,
+            customerSecondName=OrderObj.costumerSecondName,
+            comment=OrderObj.comment,
+            productId=OrderObj.productId
+        )

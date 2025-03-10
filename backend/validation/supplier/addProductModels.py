@@ -1,4 +1,4 @@
-from typing_extensions import Self, Literal, List, Dict
+from typing_extensions import Self, Literal, List, Dict, Annotated
 from pydantic import BaseModel, Field, field_validator
 
 from ..components.BeraerTokenTemplate import BearerTokenTemplate
@@ -25,18 +25,20 @@ class RequestBodyModel(BaseModel):
     '''
     title: str = Field(
         description="Title of product",
-        examples="Букет из чего-то там",
+        examples=["Букет из чего-то там"],
         max_length=128
     )
     titleImage: str = Field(
         description="Url of main image",
         max_length=1024
     )
-    additionalImages: List[str] = List[
-        Field(
-            description="Urls of additional images",
-            max_length=1024
-        )
+    additionalImages: List[
+        Annotated[
+            str, Field(
+                description="Urls of additional images",
+                max_length=1024
+            )
+        ]
     ]
     cost: CostDict
     description: str = Field(

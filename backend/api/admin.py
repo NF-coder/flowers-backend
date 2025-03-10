@@ -4,7 +4,7 @@ from typing import Dict, Any, Annotated, List
 from settings import MainConfig
 from validation.admin import listSuppliersRequestsModels, approveSuppliersRequestModels
 
-from libs.database import Users
+from libs.middleware.logic.Admin import AdminLogic
 from libs.tokens import Tokens
 
 from exceptions.basic_exception import BasicException
@@ -38,21 +38,24 @@ async def listSuppliersRequests(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_headers.Authorization
     )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isAdmin=True
+    )
 
-    if not decoded_auth_info.isAdmin:
-        raise BasicException(
-            code=403,
-            description="You're not admin!"
-        )
-
-    API = await Users.start()
-    users_array = await API.find_unconfirmed_suppliers(
+    users_array = await AdminLogic.list_suppliers_requests(
         start=request_query.start,
         count=request_query.count,
         sort=request_query.sort
     )
 
-    return users_array
+    return [
+        await listSuppliersRequestsModels.ResponceSchemaItem.parse(
+            UserObj=user
+        )
+        for user in users_array
+    ]
+        
 
 
 @router.post("/approveSupplierRequest", tags = ["admin"], status_code=200)
@@ -80,16 +83,14 @@ async def approveSupplierRequest(
         request_headers.Authorization
     )
 
-    if not decoded_auth_info.isAdmin:
-        raise BasicException(
-            code=403,
-            description="You're not admin!"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isAdmin=True
+    )
 
-    API = await Users.start()
-    await API.confirm_supplier(
+    await AdminLogic.approve_supplier_request(
         id=request_body.id,
         email=request_body.email,
     )
 
-    return {"status": "ok"}
+    return approveSuppliersRequestModels.ResponceSchema()

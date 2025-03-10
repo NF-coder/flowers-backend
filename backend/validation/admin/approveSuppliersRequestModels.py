@@ -21,12 +21,12 @@ class RequestBodyModel(BaseModel):
     '''
     email: str = Field(
         default=None,
-        description="User's email"
-    ),
+        description="User email"
+    )
     id: int = Field(
         default=None,
-        description="User's id"
-    ),
+        description="User id"
+    )
 
 class ResponceSchema(BaseModel):
     '''

@@ -27,16 +27,16 @@ class RequestQueryModel(BaseModel):
 
 class ResponceSchemaItem(BaseModel):
     title: str = Field(
-        examples="Букет из чего-то там"
+        examples=["Букет из чего-то там"]
     )
     author: str = Field(
-        examples="example@example.com",
+        examples=["example@example.com"],
     )
     image: str = Field(
-        examples="http://example.com/example.png"
+        examples=["http://example.com/example.png"]
     )
     productId: int = Field(
-        examples=1
+        examples=[1]
     )
 
     cost: CostDict

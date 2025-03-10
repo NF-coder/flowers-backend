@@ -11,7 +11,7 @@ class RequestModel(BaseModel):
     '''
     Authorization: str = Field(
         default=None,
-        examples="Basic base64(user:password)",
+        examples=["Basic base64(user:password)"],
         description="Basic auth token",
     )
 

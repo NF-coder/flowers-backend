@@ -16,10 +16,10 @@ class SecuritySettings():
     ALGORYTM = "HS512"
 
     # uncomment this before building container!
-    DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@postgres/db"
+    #DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@postgres/db"
 
     # uncomment for local database
-    #DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@localhost/db"
+    DATABASE_URL = "postgresql+asyncpg://release:horse_ate_green_guinea_pig@localhost/db"
 
 @dataclass
 class AuthSettings:

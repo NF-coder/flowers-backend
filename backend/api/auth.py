@@ -1,10 +1,15 @@
+'''
+    ## UNSAFE!
+    ASAP rewrite to SessionId(Redis) inside JWT auth
+'''
 from fastapi import APIRouter, Header, Body
 from typing import Dict, Any, Annotated
 
 from settings import MainConfig
 from validation.auth import signInModels, confirmEmailModels, registerBasicModels, deleteUserModels
 
-from libs.database import Users
+
+from libs.middleware.logic.Auth import AuthLogic
 from libs.tokens import Tokens
 
 from exceptions.basic_exception import BasicException
@@ -14,6 +19,7 @@ router = APIRouter(
     tags=["auth"]
 )
 
+# +
 @router.post("/signIn", tags = ["auth"], status_code=201)
 async def signIn(
         request_headers: Annotated[signInModels.RequestModel, Header()],
@@ -32,29 +38,20 @@ async def signIn(
     decoded_auth_info = await Tokens.decode_basic_token(
         request_headers.Authorization
     )
-    API = await Users.start()
     
-    isCrrectPassword = await API.check_password_by_email(
+    user = await AuthLogic.sign_in(
         email=decoded_auth_info.email,
         password=decoded_auth_info.password
     )
-    if not isCrrectPassword:
-        raise BasicException(
-            code=400,
-            description="Incorrect password"
-        )
+    token, _ = await Tokens.get_acess_token(**user.model_dump())
     
-    user = await API.get_by_email(decoded_auth_info.email)
+    return signInModels.ResponceSchema(
+        token=token
+    )
 
-    user.pop("password")
-    token, _ = await Tokens.get_acess_token(**user)
-    
-    return {
-        "token": token
-    }
-
+# +
 @router.post("/registerBasic", tags = ["auth"], status_code=201)
-async def register(
+async def registerBasic(
         request_body: Annotated[registerBasicModels.RequestModel, Body()],
     ) -> registerBasicModels.ResponceSchema:
     '''
@@ -69,19 +66,20 @@ async def register(
             BasicException: for all possible errors
     '''
 
-    API = await Users.start()
-    
-    await API.register(request_body.email, request_body.password, request_body.type)
+    user = await AuthLogic.register(
+        email=request_body.email,
+        password=request_body.password,
+        type=request_body.type
+    )
+    token, _ = await Tokens.get_acess_token(**user.model_dump())
 
-    user = await API.get_by_email(request_body.email)
-
-    user.pop("password")
-    token, _ = await Tokens.get_acess_token(**user)
-
-    return {"token": token}
+    return registerBasicModels.ResponceSchema(
+        token=token
+    )
 
 
 # TODO: rewrite this
+# +
 @router.post("/confirmEmail", tags = ["auth"], status_code=201)
 async def confirmEmail(
         request_headers: Annotated[confirmEmailModels.RequestHeaderModel, Header()],
@@ -107,49 +105,40 @@ async def confirmEmail(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_headers.Authorization
     )
-
-    API = await Users.start()
     
-    await API.set_email_confirmation_status(
-        id = decoded_auth_info.id
+    user = await AuthLogic.register(id=decoded_auth_info.id)
+    token, _ = await Tokens.get_acess_token(**user.model_dump())
+    
+    return confirmEmailModels.ResponceSchema(
+        token=token
     )
-
-    user = await API.get_by_id(decoded_auth_info.id)
-
-    user.pop("password")
-    token, _ = await Tokens.get_acess_token(**user)
-    
-    return {
-        "token": token
-    }
-
 
 # Can create security issues!
 # DO NOT USE THIS ENDPOINT BEFORE I FIX PROBLEMS WITH DB
-@router.delete("/deleteUser", tags = ["auth"], status_code=201)
-async def deleteUser(
-        request_header: Annotated[deleteUserModels.RequestModel, Header()],
-    ) -> deleteUserModels.ResponceSchema:
-    '''
-        POST reqest wich implements deletion of user. Must be initiated by user
-        Args:
-            request_header (deleteUserModels.RequestModel):
-                Request header which contains JWT token. For more information see `deleteUserModels.RequestModel`
-        Returns:
-            status (deleteUserModels.ResponceSchema):
-                Response with deletion status. For more inforamtion see `deleteUserModels.ResponceSchema`
-        Raises:
-            BasicException: for all possible errors
-    '''
-
-    API = await Users.start()
-    
-    decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization[7:]
-    )
-
-    await API.delete_user_by_email(
-        decoded_auth_info.email
-    )  # DO NOT DELETE BY ID!!! It may cause security vulnerability because we can't deactivate JWT token and user can delete somone else!
-
-    return {"status": "ok"}
+# +
+#@router.delete("/deleteUser", tags = ["auth"], status_code=201)
+#async def deleteUser(
+#        request_header: Annotated[deleteUserModels.RequestModel, Header()],
+#    ) -> deleteUserModels.ResponceSchema:
+#    '''
+#        POST reqest wich implements deletion of user. Must be initiated by user
+#        Args:
+#            request_header (deleteUserModels.RequestModel):
+#                Request header which contains JWT token. For more information see `deleteUserModels.RequestModel`
+#        Returns:
+#            status (deleteUserModels.ResponceSchema):
+#                Response with deletion status. For more inforamtion see `deleteUserModels.ResponceSchema`
+#        Raises:
+#            BasicException: for all possible errors
+#    '''
+#
+#    decoded_auth_info = await Tokens.decode_acess_token(
+#        request_header.Authorization[7:]
+#    )
+#
+#    # DO NOT DELETE BY ID!!! It may cause security vulnerability because we can't deactivate JWT token and user can delete somone else!
+#    await UsersAPI.delete_user_by_email(
+#        decoded_auth_info.email
+#    )  
+#
+#    return deleteUserModels.ResponceSchema()

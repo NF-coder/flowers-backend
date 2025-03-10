@@ -4,17 +4,10 @@ from typing import Dict, Any, Annotated, List
 from settings import MainConfig
 from validation.supplier import addProductModels, myProductsListModels, setOrderStatusModels, finishOrderModels, supplierReportModels
 
-from libs.database import Catalog
-from libs.database import ProductAdditionalImages
-
 #for fustfunc endpoint
-from api.serializers import orderInfoSerializer
-from libs.database import Order
 from validation.order import OrdersForMeModels
 
 from libs.tokens import Tokens
-
-from api.serializers import myProductsListSerializer
 
 from exceptions.basic_exception import BasicException
 
@@ -34,13 +27,10 @@ async def addProduct(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     API = await Catalog.start()
     productId = await API.add_product(
@@ -67,13 +57,10 @@ async def myProductsList(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     API = await Catalog.start()
     productArr = await API.get_my_products(
@@ -97,13 +84,10 @@ async def ordersForMe(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     OrderAPI = await Order.start()
     CatalogAPI = await Catalog.start()
@@ -131,13 +115,10 @@ async def setOrderStatus(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     OrderAPI = await Order.start()
 
@@ -157,13 +138,10 @@ async def finishOrder(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     OrderAPI = await Order.start()
 
@@ -181,13 +159,10 @@ async def supplierReport(
     decoded_auth_info = await Tokens.decode_acess_token(
         request_header.Authorization
     )
-
-    if not decoded_auth_info.type == "supplier" and\
-          not decoded_auth_info.isSupplierStatusConfirmed:
-        raise BasicException(
-            code=400,
-            description="You're not supplier or your supplier status is unconfirmed"
-        )
+    await Tokens.checkPremissions(
+        token=decoded_auth_info,
+        isConfirmedSupplier=True
+    )
     
     OrderAPI = await Order.start()
     CatalogAPI = await Catalog.start()

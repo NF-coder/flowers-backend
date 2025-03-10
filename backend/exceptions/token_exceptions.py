@@ -9,6 +9,14 @@ class CantDecodeJWT(BasicException):
     def __post_init__(self): self.code = 400
 
 @dataclass
+class NotEnoughPremissions(BasicException):
+    '''
+        Token Exception dataclass. Signals, that there're not enough premissions
+    '''
+    def __post_init__(self): self.code = 403
+
+
+@dataclass
 class CantDecodeBasicToken(BasicException):
     '''
         Token Exception dataclass. Signals, that library can't decode Basic token for some reason.

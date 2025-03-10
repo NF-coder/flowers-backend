@@ -4,11 +4,10 @@ from typing import Dict, Any, Annotated, List
 from settings import MainConfig
 from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels, CancelOrderModels
 
-from libs.database import Order, Geo, Catalog
+from libs.middleware.logic.Order import OrderLogic
 
 from libs.tokens import Tokens
 
-from api.serializers import orderInfoSerializer
 from exceptions.basic_exception import BasicException
 
 router = APIRouter(
@@ -16,7 +15,7 @@ router = APIRouter(
     tags=["order"]
 )
 
-@router.post("/createOrder", tags = ["catalog"], status_code=202)
+@router.post("/createOrder", tags = ["order"], status_code=202)
 async def createOrder(
         request_header: Annotated[CreateOrderModels.CreateOrderHeaderModel, Header()],
         request_body: Annotated[CreateOrderModels.CreateOrderBody, Body()],
@@ -26,31 +25,25 @@ async def createOrder(
         request_header.Authorization
     )
 
-    GeoAPI = await Geo.start()
-    geoId = await GeoAPI.add_geo(
+    OrderLogic.create_order(
         country=request_body.Geo.Country,
         city=request_body.Geo.City,
         street=request_body.Geo.Street,
         building=request_body.Geo.Building,
         flat=request_body.Geo.Flat,
-        userId=decoded_auth_info.id
+
+        userId=decoded_auth_info.id,
+
+        firstName=request_body.FirstName,
+        secondName=request_body.SecondName,
+        comment=request_body.Comment,
+        phoneNumber=request_body.PhoneNumber,
+        productId=request_body.ProductIdArray
     )
 
-    OrderAPI = await Order.start()
-    for productId in request_body.ProductIdArray:
-        await OrderAPI.create_order(
-            geoId=geoId,
-            userId=decoded_auth_info.id,
-            firstName=request_body.FirstName,
-            secondName=request_body.SecondName,
-            comment=request_body.Comment,
-            phoneNumber=request_body.PhoneNumber,
-            productId=productId
-        )
+    return CreateOrderModels.ResponceSchema()
 
-    return {"status": "ok"}
-
-@router.get("/orderInfo", tags = ["catalog"], status_code=202)
+@router.get("/orderInfo", tags = ["order"], status_code=202)
 async def orderInfo(
         request_header: Annotated[OrderInfoModels.OrderInfoHeader, Header()],
         request_query: Annotated[OrderInfoModels.OrderInfoQuery, Query()],
@@ -60,16 +53,16 @@ async def orderInfo(
         request_header.Authorization
     )
 
-    OrderAPI = await Order.start()
-    orderInfo = await OrderAPI.get_by_id(
+    orderInfo = await OrderLogic.order_info(
         id=request_query.orderId
     )
 
-    serializer = await orderInfoSerializer.start()
-    return await serializer.serialize(orderInfo[0])
+    return await OrderInfoModels.ResponceSchema.parse(
+        OrderObj=orderInfo
+    )
 
 
-@router.get("/myActiveOrders", tags = ["catalog"], status_code=202)
+@router.get("/myActiveOrders", tags = ["order"], status_code=202)
 async def myActiveOrders(
         request_header: Annotated[myActiveOrdersModels.MyActiveOrdersHeader, Header()],
     ) -> List[myActiveOrdersModels.ResponceItemSchema]:
@@ -78,18 +71,16 @@ async def myActiveOrders(
         request_header.Authorization
     )
 
-    OrderAPI = await Order.start()
-    orderInfo = await OrderAPI.get_active_by_userId(
+    ordersArr = await OrderLogic.get_active_by_userId(
         userId=decoded_auth_info.id
     )
 
-    serializer = await orderInfoSerializer.start()
-    out = []
-    for item in orderInfo:
-        print(item)
-        out.append(await serializer.serialize(item))
-    return out
-
+    return [
+        myActiveOrdersModels.ResponceItemSchema.parse(
+            OrderObj=orderInfo
+        )
+        for orderInfo in ordersArr
+    ]
 
 @router.post("/cancelOrder", tags = ["order"], status_code=202)
 async def cancelOrder(
@@ -101,9 +92,8 @@ async def cancelOrder(
         request_header.Authorization
     )
 
-    OrderAPI = await Order.start()
-    await OrderAPI.cancel_by_id(
+    await OrderLogic.cancel_by_id(
         id=request_body.orderId
     )
 
-    return {"status": "ok"}
+    return CancelOrderModels.ResponceSchema()

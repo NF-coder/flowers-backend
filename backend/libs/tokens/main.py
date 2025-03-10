@@ -9,6 +9,8 @@ import base64
 from .objects import *
 from exceptions.token_exceptions import *
 
+from typing_extensions import Self
+
 class Tokens():
     @staticmethod
     def __init__(self): pass
@@ -25,8 +27,7 @@ class Tokens():
         return jwt.encode(payload, key = SecurityConfig.SECURITY_KEY, algorithm = SecurityConfig.ALGORYTM), exp
     
     async def decode_acess_token(token: str) -> JWTInfo:
-        if "Bearer" in token:
-            token = token[7:]
+        token = token[7:] if "Bearer" in token else token
         try:
             payload = jwt.decode(
                 token,
@@ -42,6 +43,30 @@ class Tokens():
                 description="Can't decode JWT. Maybe it expired"
             )
     
+    async def checkPremissions(
+        token,
+        isAdmin: bool = False,
+        isConfirmedSupplier: bool = False,
+        isEmailConfirmed: bool = False
+    ) -> None:
+
+        if isAdmin and not token.isAdmin:
+            raise NotEnoughPremissions(
+                description="You should be admin!"
+            )
+        
+        if isConfirmedSupplier and\
+            not token.type == "supplier" and\
+            not token.isSupplierStatusConfirmed:
+            raise NotEnoughPremissions(
+                description="You should be supplier and may have supplier status confirmed!"
+            )
+        
+        if isEmailConfirmed and token.isEmailConfirmed:
+            raise NotEnoughPremissions(
+                description="Your email should be confirmed!"
+            )
+
     async def decode_basic_token(token: str) -> BaicInfo:
         try:
             token = base64.b64decode(

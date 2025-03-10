@@ -1,8 +1,8 @@
-from libs.database import Users
+from libs.middleware import Users
 from libs.tokens import Tokens
 
-from libs.database.backend.api.UsersAPI import UsersAPI
-from libs.database.backend.fields.UsersDB import UsersDB
+from libs.middleware.database.api.UsersAPI import UsersAPI
+from libs.middleware.database.fields.UsersDB import UsersDB
 
 import asyncio
 

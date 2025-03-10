@@ -3,11 +3,12 @@ from dataclasses import dataclass
 from typing import Dict
 from exceptions.token_exceptions import *
 
-from typing import Self
+from typing_extensions import Self
 
-@dataclass
-class JWTInfo:
-    id: str
+from pydantic import BaseModel, Field, field_validator
+
+class JWTInfo(BaseModel):
+    id: int
     email: str
     expires: int
     type: str
@@ -15,28 +16,28 @@ class JWTInfo:
     isSupplierStatusConfirmed: bool
     isAdmin: bool
 
-    @classmethod
-    def set_from_dict(self, data: Dict[str, str]) -> Self:
+    @staticmethod
+    def set_from_dict(data: Dict[str, str]) -> Self:
         '''
             Sets information about token from dict
         '''
         try:
-            self.email = data["email"]
-            self.id = data["id"]
-            self.expires = data["exp"]
-            self.type = data["type"]
-            self.isEmailConfirmed = data["isEmailConfirmed"]
-            self.isSupplierStatusConfirmed = data["isSupplierStatusConfirmed"]
-            self.isAdmin = data["isAdmin"]
+            return JWTInfo(
+                email = data["email"],
+                id = data["id"],
+                expires = data["exp"],
+                type = data["type"],
+                isEmailConfirmed = data["isEmailConfirmed"],
+                isSupplierStatusConfirmed = data["isSupplierStatusConfirmed"],
+                isAdmin = data["isAdmin"]
+            )
         except Exception as exc:
             raise CantDecodeJWT(
                 description="JWT payload dict keys mismatch"
-            )
-        
-        return self
+            )    
 
 @dataclass
-class BaicInfo:
+class BaicInfo(BaseModel):
     email: str
     password: str
 
@@ -46,11 +47,12 @@ class BaicInfo:
             Sets information about token from dict
         '''
         try:
-            self.email = data["email"]
-            self.password = data["password"]
+            return BaicInfo(
+                email = data["email"],
+                password = data["password"]
+            )
+            
         except Exception as exc:
             raise CantDecodeBasicToken(
                 description="Basic token payload dict keys mismatch"
             )
-        
-        return self

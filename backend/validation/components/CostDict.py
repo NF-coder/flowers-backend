@@ -11,8 +11,9 @@ class CostDict(BaseModel):
         TODO: docstring
     '''
     currency: str = Field(
+        default="RUB",
         description="Currency of cost",
-        examples="RUB",
+        examples=["RUB"],
         max_length=128
     ) # и потом я крутейше отброшу это поле)
     costNum: int = Field(

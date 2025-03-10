@@ -27,9 +27,9 @@ class OrderDB(declarative_base()):
     isFinished: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     isCanceled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    geoId: Mapped[int] = mapped_column(Integer, nullable=False) # FK
-    userId: Mapped[int] = mapped_column(Integer, nullable=False) # FK
-    productId: Mapped[int] = mapped_column(Integer, nullable=False) # FK
+    geoId: Mapped[int] = mapped_column(ForeignKey("Geo.id", ondelete="RESTRICT"), nullable=False) # FK
+    userId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="RESTRICT"), nullable=False) # FK
+    productId: Mapped[int] = mapped_column(ForeignKey("Catalog.id", ondelete="RESTRICT"), nullable=False) # FK
 
     orderStatus: Mapped[int] = mapped_column(String(32), nullable=False, default="Обрабатывается...")
     orderCreatedTime: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))

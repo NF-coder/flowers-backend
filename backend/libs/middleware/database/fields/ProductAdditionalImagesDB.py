@@ -15,7 +15,7 @@ class ProductAdditionalImagesDB(declarative_base()):
     id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, primary_key=True)
     imageUrl:  Mapped[str] = mapped_column(String(1024), nullable=False)
 
-    productId: Mapped[int] = mapped_column(Integer, nullable=False) # FK
+    productId: Mapped[int] = mapped_column(ForeignKey("Catalog.id", ondelete="CASCADE"), nullable=False) # FK
 
     def __repr__(self):
         '''

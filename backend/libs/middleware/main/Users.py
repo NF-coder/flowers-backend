@@ -56,7 +56,7 @@ class Users():
                 NotUnique: If email is not unique
         '''
         
-        if await self.is_email_registered(email, self.UsersAPI):
+        if await self.is_email_registered(email):
             raise NotUnique(
                 description="Email is not unique"
             )
@@ -79,7 +79,7 @@ class Users():
                 NotExist: if no users with specified email
         '''
         
-        if not (await self.is_email_registered(email, self.UsersAPI)):
+        if not (await self.is_email_registered(email)):
             raise NotExist(description = "User does not exist")
         
         userInfo = await self.UsersAPI.get_by_email(email)
@@ -104,7 +104,7 @@ class Users():
                 NotExist: if no users with specified id
         '''
 
-        if not (await self.is_id_registered(id, self.UsersAPI)):
+        if not (await self.is_id_registered(id)):
             raise NotExist(description = "User does not exist")
         
         userInfo = await self.UsersAPI.get_by_id(id)
@@ -122,7 +122,7 @@ class Users():
                 NotExist: if no users with specified email
         '''
 
-        if not (await self.is_email_registered(email, self.UsersAPI)):
+        if not (await self.is_email_registered(email)):
             raise NotExist(
                 description="User does not exist"
             )

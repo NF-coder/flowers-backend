@@ -38,7 +38,7 @@ class UsersAPI(BasicAPI):
             session.add(statement)
             await session.commit()
     
-    async def get_by_email(self, email: str) -> DatabaseType:
+    async def get_by_email(self, email: str) -> List[DatabaseType]:
         '''
             Method that returns all users with specified email.
             Args:
@@ -49,9 +49,9 @@ class UsersAPI(BasicAPI):
         statement = select(self.base).where(self.base.email == email)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out[0]
+        return out.all()
     
-    async def get_by_id(self, id: int) -> DatabaseType:
+    async def get_by_id(self, id: int) -> List[DatabaseType]:
         '''
             Method that returns all user with specified id.
             Args:
@@ -62,7 +62,7 @@ class UsersAPI(BasicAPI):
         statement = select(self.base).where(self.base.id == id)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out[0]
+        return out.all()
     
     async def set_email_confirmation_status_by_id(self, id: int, status: bool) -> None:
         '''

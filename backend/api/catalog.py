@@ -6,8 +6,6 @@ from settings import MainConfig
 from validation.catalog import getCatalogModels, getCatalogItemDetailsModels, searchModels
 from validation.components import CostDict, ReviewsDict
 
-from api.serializers.catalogSerializers import *
-
 from libs.middleware.logic.Catalog import CatalogLogic
 
 from exceptions.basic_exception import BasicException
@@ -17,7 +15,7 @@ router = APIRouter(
     tags=["catalog"]
 )
 
-@router.get("/item", tags = ["catalog"], status_code=200)
+@router.get("/getCatalogItemDetails", tags = ["catalog"], status_code=200)
 async def getCatalogItemDetails(
         request_query: Annotated[getCatalogItemDetailsModels.RequestModel, Query()],
     ) -> getCatalogItemDetailsModels.ResponceSchema:
@@ -30,7 +28,7 @@ async def getCatalogItemDetails(
         CatalogObj=item
     ) 
 
-@router.get("/catalog", tags = ["catalog"], status_code=200)
+@router.get("/getCatalog", tags = ["catalog"], status_code=200)
 async def getCatalog(
         request_query: Annotated[getCatalogModels.RequestQueryModel, Query()],
     ) -> List[getCatalogModels.ResponceSchemaItem]:

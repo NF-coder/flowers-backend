@@ -36,13 +36,12 @@ class JWTInfo(BaseModel):
                 description="JWT payload dict keys mismatch"
             )    
 
-@dataclass
 class BaicInfo(BaseModel):
     email: str
     password: str
 
-    @classmethod
-    def set_from_dict(self, data: Dict[str, str]) -> Self:
+    @staticmethod
+    def set_from_dict(data: Dict[str, str]) -> Self:
         '''
             Sets information about token from dict
         '''

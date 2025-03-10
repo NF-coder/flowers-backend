@@ -9,6 +9,7 @@ import base64
 from .objects import *
 from exceptions.token_exceptions import *
 
+import traceback
 from typing_extensions import Self
 
 class Tokens():
@@ -69,19 +70,18 @@ class Tokens():
 
     async def decode_basic_token(token: str) -> BaicInfo:
         try:
+            token = token[6:] if "Basic" in token else token
             token = base64.b64decode(
-                token[6:], # delete "Basic " part
+                token, # delete "Basic " part
                 altchars=None,
                 validate=False
-            ).decode(encoding="utf-8-sig") # decode bytes output
+            ).decode(encoding="UTF-8-SIG") # decode bytes output
 
             separator_idx = token.rfind(":") # idx of last ":", which is separator between email and password
             
-            return BaicInfo.set_from_dict(
-                {
-                    "email": token[:separator_idx],
-                    "password": token[separator_idx+1:]
-                }
+            return BaicInfo(
+                email = token[:separator_idx],
+                password = token[separator_idx+1:]
             )
         except Exception as exc:
             raise CantDecodeBasicToken(

@@ -19,7 +19,7 @@ class GeoDB(declarative_base()):
 
     id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, primary_key=True)
 
-    userId: Mapped[int] = mapped_column(Integer, nullable=False) # FK
+    userId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="CASCADE"), nullable=False) # FK
 
     country: Mapped[int] = mapped_column(String(128), nullable=False)
     city: Mapped[str] = mapped_column(String(128), nullable=False)

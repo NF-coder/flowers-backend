@@ -27,13 +27,13 @@ class RequestQueryModel(BaseModel):
 
 class ResponceSchemaItem(BaseModel):
     title: str = Field(
-        examples=["Букет из чего-то там"]
+        example="Букет из чего-то там"
     )
     author: str = Field(
-        examples=["example@example.com"],
+        example="example@example.com",
     )
     image: str = Field(
-        examples=["http://example.com/example.png"]
+        example="http://example.com/example.png"
     )
     productId: int = Field(
         examples=[1]

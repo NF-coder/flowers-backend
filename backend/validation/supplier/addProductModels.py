@@ -25,7 +25,7 @@ class RequestBodyModel(BaseModel):
     '''
     title: str = Field(
         description="Title of product",
-        examples=["Букет из чего-то там"],
+        example="Букет из чего-то там",
         max_length=128
     )
     titleImage: str = Field(

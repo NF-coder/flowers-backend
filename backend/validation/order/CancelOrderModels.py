@@ -10,9 +10,13 @@ class CancelOrderHeader(BearerTokenTemplate):
     pass
 
 class CancelOrderBody(BaseModel):
-    orderId: int
+    orderId: int = Field(
+        default="ok",
+        description="Id of order"
+    )
 
 class ResponceSchema(BaseModel):
     status: str = Field(
-        default="ok"
+        default="ok",
+        description="Status of request"
     )

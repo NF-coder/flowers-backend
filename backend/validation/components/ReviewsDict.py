@@ -13,12 +13,12 @@ class ReviewsDict(BaseModel):
     rank: float = Field(
         description="Item rank",
         default=4.0,  # микронаёбка)
-        examples=[5.0],
+        example=5.0,
         ge=0,
         le=5
     )
     reviewsCount: int = Field(
-        examples=[0],
+        example=0,
         default=10, # микронаёбка)
         description="Number of reviews"
     )

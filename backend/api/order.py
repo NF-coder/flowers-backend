@@ -15,7 +15,12 @@ router = APIRouter(
     tags=["order"]
 )
 
-@router.post("/createOrder", tags = ["order"], status_code=202)
+@router.post(
+    "/createOrder",
+    tags=["order"],
+    summary="Создание заказа",
+    status_code=201
+)
 async def createOrder(
         request_header: Annotated[CreateOrderModels.CreateOrderHeaderModel, Header()],
         request_body: Annotated[CreateOrderModels.CreateOrderBody, Body()],
@@ -43,7 +48,12 @@ async def createOrder(
 
     return CreateOrderModels.ResponceSchema()
 
-@router.get("/orderInfo", tags = ["order"], status_code=202)
+@router.get(
+    "/orderInfo",
+    tags=["order"],
+    summary="Информация о заказе по идентификатору",
+    status_code=200
+)
 async def orderInfo(
         request_header: Annotated[OrderInfoModels.OrderInfoHeader, Header()],
         request_query: Annotated[OrderInfoModels.OrderInfoQuery, Query()],
@@ -62,7 +72,12 @@ async def orderInfo(
     )
 
 
-@router.get("/myActiveOrders", tags = ["order"], status_code=202)
+@router.get(
+    "/myActiveOrders",
+    tags=["order"],
+    summary="Информация об активных заказах пользователя",
+    status_code=200
+)
 async def myActiveOrders(
         request_header: Annotated[myActiveOrdersModels.MyActiveOrdersHeader, Header()],
     ) -> List[myActiveOrdersModels.ResponceItemSchema]:
@@ -82,7 +97,12 @@ async def myActiveOrders(
         for orderInfo in ordersArr
     ]
 
-@router.post("/cancelOrder", tags = ["order"], status_code=202)
+@router.post(
+    "/cancelOrder",
+    tags=["order"],
+    summary="Отмена заказа",
+    status_code=200
+)
 async def cancelOrder(
         request_header: Annotated[CancelOrderModels.CancelOrderHeader, Header()],
         request_body: Annotated[CancelOrderModels.CancelOrderBody, Body()],

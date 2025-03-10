@@ -12,7 +12,7 @@ class RequestHeaderModel(BearerTokenTemplate):
     pass
 
 class RequestQueryModel(BaseModel):
-    productId: Optional[int] = Field(examples=[1], default=None)
+    productId: Optional[int] = Field(example=1, default=None)
 
 #class ResponceSchema(BaseModel):
 #    status: str = Field(

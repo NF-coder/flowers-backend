@@ -22,7 +22,8 @@ class RequestModel(BaseModel):
         max_length=128,
         pattern=AuthConfig.EMAIL_CHECKER_REGEX,
         frozen=True,
-        description="User email"
+        description="User email",
+        example="example@example.com"
     )
     password: str = Field(
         min_length=8,

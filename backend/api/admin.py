@@ -14,7 +14,12 @@ router = APIRouter(
     tags=["admin"]
 )
 
-@router.get("/listSuppliersRequests", tags = ["admin"], status_code=201)
+@router.get(
+    "/listSuppliersRequests",
+    tags=["admin"],
+    summary="Список заявок на добавление поставщиков",
+    status_code=200
+)
 async def listSuppliersRequests(
         request_headers: Annotated[listSuppliersRequestsModels.RequestHeaderModel, Header()],
         request_query: Annotated[listSuppliersRequestsModels.RequestQueryModel, Query()]
@@ -58,7 +63,12 @@ async def listSuppliersRequests(
         
 
 
-@router.post("/approveSupplierRequest", tags = ["admin"], status_code=200)
+@router.post(
+    "/approveSupplierRequest",
+    tags=["admin"],
+    summary="Одобрение заявки от поставщика",
+    status_code=200
+)
 async def approveSupplierRequest(
         request_headers: Annotated[approveSuppliersRequestModels.RequestHeaderModel, Header()],
         request_body: Annotated[approveSuppliersRequestModels.RequestBodyModel, Body()]

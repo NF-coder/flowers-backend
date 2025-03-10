@@ -20,8 +20,16 @@ class RequestQueryModel(BaseModel):
             count (int): number of elements
             sort (str): one of `time_upscending` `time_descending`
     '''
-    start: int = 0,
-    count: int = 20,
+    start: int = Field(
+        example=0,
+        default=0,
+        description="First element index"
+    )
+    count: int = Field(
+        example=20,
+        default=20,
+        description="Count of elements in result array (can be less than specified)"
+    )
     sort: Literal["time_upscending", "time_descending"] = "time_descending"
 
 class ResponceSchemaItem(BaseModel):
@@ -32,11 +40,11 @@ class ResponceSchemaItem(BaseModel):
             id (int): user's id
     '''
     email: str = Field(
-        examples=["example@example.com"],
+        example="example@example.com",
         description="User email"
     )
     id: int = Field(
-        examples=[1],
+        example=1,
         description="User id"
     )
 

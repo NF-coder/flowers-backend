@@ -15,7 +15,12 @@ router = APIRouter(
     tags=["catalog"]
 )
 
-@router.get("/getCatalogItemDetails", tags = ["catalog"], status_code=200)
+@router.get(
+    "/getCatalogItemDetails",
+    tags=["catalog"],
+    summary="Получение деталей о товаре",
+    status_code=200
+)
 async def getCatalogItemDetails(
         request_query: Annotated[getCatalogItemDetailsModels.RequestModel, Query()],
     ) -> getCatalogItemDetailsModels.ResponceSchema:
@@ -28,7 +33,12 @@ async def getCatalogItemDetails(
         CatalogObj=item
     ) 
 
-@router.get("/getCatalog", tags = ["catalog"], status_code=200)
+@router.get(
+    "/getCatalog",
+    tags=["catalog"],
+    summary="Каталог товаров",
+    status_code=200
+)
 async def getCatalog(
         request_query: Annotated[getCatalogModels.RequestQueryModel, Query()],
     ) -> List[getCatalogModels.ResponceSchemaItem]:

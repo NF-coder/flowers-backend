@@ -23,7 +23,7 @@ class RequestBodyModel(BaseModel):
         default=None,
         max_length=6,
         min_length=6,
-        examples=["AAABBB"],
+        example="AAABBB",
         description="Email confirmation code",
     )
 

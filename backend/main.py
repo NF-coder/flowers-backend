@@ -11,6 +11,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from fastapi.encoders import jsonable_encoder
+from fastapi.openapi.utils import get_openapi
+
 # from typing import Dict, Any
 # from datetime import datetime
 
@@ -21,7 +24,15 @@ import asyncio
 
 # -- INIT BLOCK --
 
-app = FastAPI()
+responses = {
+    422: {'model': BasicException, 'description': 'Validation Error'}
+}
+
+app = FastAPI(
+    title="Flowers API",
+    version="0.2.1",
+    responses={**responses}
+)
 
 origins = ["*"]
 app.add_middleware(
@@ -29,7 +40,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 app.include_router(auth.router)
@@ -92,9 +103,13 @@ async def validationException_handler(request: Request, exc: RequestValidationEr
             "description": errors_string[:-1:],
             "code": 422
         }
-    )  
+    )
 
-@app.get(f'/api/v{MainConfig.API_VERSION}/ping', status_code = 200)
+@app.get(
+    f'/api/v{MainConfig.API_VERSION}/ping',
+    summary="ping",
+    status_code=200
+)
 async def send():
     '''
         GET request to test avilability of server. See in /api/ping

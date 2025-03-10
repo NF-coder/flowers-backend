@@ -20,7 +20,12 @@ router = APIRouter(
 )
 
 # +
-@router.post("/signIn", tags = ["auth"], status_code=201)
+@router.post(
+    "/signIn",
+    tags=["auth"],
+    summary="Авторизация",
+    status_code=200
+)
 async def signIn(
         request_headers: Annotated[signInModels.RequestModel, Header()],
     ) -> signInModels.ResponceSchema:
@@ -50,7 +55,12 @@ async def signIn(
     )
 
 # +
-@router.post("/registerBasic", tags = ["auth"], status_code=201)
+@router.post(
+    "/registerBasic",
+    tags=["auth"],
+    summary="Регистрация",
+    status_code=201
+)
 async def registerBasic(
         request_body: Annotated[registerBasicModels.RequestModel, Body()],
     ) -> registerBasicModels.ResponceSchema:
@@ -80,7 +90,12 @@ async def registerBasic(
 
 # TODO: rewrite this
 # +
-@router.post("/confirmEmail", tags = ["auth"], status_code=201)
+@router.post(
+    "/confirmEmail",
+    tags = ["auth"],
+    summary="Подтверждение почты при регистрации (TODO: и её изменении) [всё ещё не реализовано]",
+    status_code=200
+)
 async def confirmEmail(
         request_headers: Annotated[confirmEmailModels.RequestHeaderModel, Header()],
         request_body: Annotated[confirmEmailModels.RequestBodyModel, Body()]

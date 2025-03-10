@@ -13,8 +13,8 @@ class CostDict(BaseModel):
     currency: str = Field(
         default="RUB",
         description="Currency of cost",
-        examples=["RUB"],
-        max_length=128
+        example="RUB",
+        max_length=8
     ) # и потом я крутейше отброшу это поле)
     costNum: int = Field(
         description="Cost of product"

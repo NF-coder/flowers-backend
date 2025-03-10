@@ -16,18 +16,18 @@ class RequestModel(BaseModel):
     '''
     id: int = Field(
         description="Catalog item id",
-        examples=[1]
+        example=1
     )
 
 class ResponceSchema(BaseModel):
     title: str = Field(
-        examples=["Букет из чего-то там"]
+        example="Букет из чего-то там"
     )
     author: str = Field(
-        examples=["example@example.com"],
+        example="example@example.com",
     )
     titleImage: str = Field(
-        examples=["http://example.com/example.png"]
+        example="http://example.com/example.png"
     )
 
     additionalImages: List[
@@ -39,19 +39,19 @@ class ResponceSchema(BaseModel):
     ]
 
     productId: int = Field(
-        examples=[1]
+        example=1
     )
 
     cost: CostDict
     reviews: ReviewsDict
 
     description: str = Field(
-        examples=["Lorem Ipsum"]
+        example="Lorem Ipsum"
     )
 
     boughtTimesCounter: int = Field(
         default=100, # placeholder
-        examples=[100]
+        example=100
     )
 
     @staticmethod

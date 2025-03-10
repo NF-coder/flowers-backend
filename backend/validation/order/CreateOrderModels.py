@@ -1,4 +1,4 @@
-from typing_extensions import Self, List
+from typing_extensions import Self, List, Optional
 from pydantic import BaseModel, Field, field_validator
 
 from exceptions import BasicException
@@ -16,7 +16,7 @@ class CreateOrderBody(BaseModel):
     FirstName: str = Field(
         max_length=64
     )
-    SecondName: str = Field(
+    SecondName: Optional[str] = Field(
         max_length=64
     )
     Comment: str = Field(

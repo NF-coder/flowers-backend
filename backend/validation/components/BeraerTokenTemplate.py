@@ -12,7 +12,7 @@ class BearerTokenTemplate(BaseModel):
     '''
     Authorization: str = Field(
         default=None,
-        examples=["Bearer AAA.BBB.CCC"],
+        example="Bearer AAA.BBB.CCC",
         description="Bearer auth token",
     )
 

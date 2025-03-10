@@ -17,7 +17,7 @@ from fastapi.openapi.utils import get_openapi
 # from typing import Dict, Any
 # from datetime import datetime
 
-from api import auth, admin, catalog, order
+from api import auth, admin, catalog, order, supplier
 from exceptions import BasicException
 
 import asyncio
@@ -30,8 +30,9 @@ responses = {
 
 app = FastAPI(
     title="Flowers API",
-    version="0.2.1",
-    responses={**responses}
+    version="0.1.1",
+    responses={**responses},
+    root_path=f"/api/v{MainConfig.API_VERSION}"
 )
 
 origins = ["*"]
@@ -45,7 +46,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(admin.router)
-#app.include_router(supplier.router)
+app.include_router(supplier.router)
 app.include_router(catalog.router)
 app.include_router(order.router)
 

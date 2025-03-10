@@ -15,7 +15,7 @@ from libs.tokens import Tokens
 from exceptions.basic_exception import BasicException
 
 router = APIRouter(
-    prefix=f"/api/v{MainConfig.API_VERSION}/auth",
+    prefix="/auth",
     tags=["auth"]
 )
 

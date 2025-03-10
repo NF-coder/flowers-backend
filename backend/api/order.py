@@ -11,7 +11,7 @@ from libs.tokens import Tokens
 from exceptions.basic_exception import BasicException
 
 router = APIRouter(
-    prefix=f"/api/v{MainConfig.API_VERSION}/order",
+    prefix="/order",
     tags=["order"]
 )
 

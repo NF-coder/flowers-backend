@@ -11,7 +11,7 @@ from libs.middleware.logic.Catalog import CatalogLogic
 from exceptions.basic_exception import BasicException
 
 router = APIRouter(
-    prefix=f"/api/v{MainConfig.API_VERSION}/catalog",
+    prefix="/catalog",
     tags=["catalog"]
 )
 

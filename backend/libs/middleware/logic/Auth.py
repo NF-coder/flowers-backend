@@ -52,3 +52,10 @@ class AuthLogic():
             id=id
         )
         return await UserSchema.parse(new_user_data)
+    
+    async def delete_user(
+            email: str
+        ) -> None:
+        await Users.delete_user_by_email(
+            email=email
+        )  

@@ -7,6 +7,7 @@ from exceptions import BasicException
 
 from ..components.CostDict import CostDict
 from ..components.ReviewsDict import ReviewsDict
+from libs.middleware.logic.schemas.SupplierSchemas import ProductSchema
 
 class RequestHeaderModel(BearerTokenTemplate):
     '''
@@ -25,7 +26,7 @@ class RequestQueryModel(BaseModel):
     count: int = 20,
     sort: Literal["time_upscending", "time_descending"] = "time_descending"
 
-class ResponceSchemaItem(BaseModel):
+class ResponceItemSchema(BaseModel):
     title: str = Field(
         example="Букет из чего-то там"
     )
@@ -41,3 +42,16 @@ class ResponceSchemaItem(BaseModel):
 
     cost: CostDict
     reviews: ReviewsDict
+
+    async def parse(ProductObj: ProductSchema) -> Self:
+        return ResponceItemSchema(
+            title=ProductObj.title,
+            author=ProductObj.supplierEmail,
+            image=ProductObj.titleImage,
+            productId=ProductObj.productId,
+
+            cost=CostDict(
+                costNum=ProductObj.cost
+            ),
+            reviews=ReviewsDict()
+        )

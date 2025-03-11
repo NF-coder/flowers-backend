@@ -128,32 +128,35 @@ async def confirmEmail(
         token=token
     )
 
-# Can create security issues!
-# DO NOT USE THIS ENDPOINT BEFORE I FIX PROBLEMS WITH DB
-# +
-#@router.delete("/deleteUser", tags = ["auth"], status_code=201)
-#async def deleteUser(
-#        request_header: Annotated[deleteUserModels.RequestModel, Header()],
-#    ) -> deleteUserModels.ResponceSchema:
-#    '''
-#        POST reqest wich implements deletion of user. Must be initiated by user
-#        Args:
-#            request_header (deleteUserModels.RequestModel):
-#                Request header which contains JWT token. For more information see `deleteUserModels.RequestModel`
-#        Returns:
-#            status (deleteUserModels.ResponceSchema):
-#                Response with deletion status. For more inforamtion see `deleteUserModels.ResponceSchema`
-#        Raises:
-#            BasicException: for all possible errors
-#    '''
-#
-#    decoded_auth_info = await Tokens.decode_acess_token(
-#        request_header.Authorization[7:]
-#    )
-#
-#    # DO NOT DELETE BY ID!!! It may cause security vulnerability because we can't deactivate JWT token and user can delete somone else!
-#    await UsersAPI.delete_user_by_email(
-#        decoded_auth_info.email
-#    )  
-#
-#    return deleteUserModels.ResponceSchema()
+@router.delete(
+    "/deleteUser",
+    summary="Удаление пользователя",
+    tags=["auth"],
+    status_code=200
+)
+async def deleteUser(
+        request_headers: Annotated[deleteUserModels.RequestModel, Header()],
+    ) -> deleteUserModels.ResponceSchema:
+    '''
+        POST reqest wich implements deletion of user. Must be initiated by user
+        Args:
+            request_headers (deleteUserModels.RequestModel):
+                Request header which contains JWT token. For more information see `deleteUserModels.RequestModel`
+        Returns:
+            status (deleteUserModels.ResponceSchema):
+                Response with deletion status. For more inforamtion see `deleteUserModels.ResponceSchema`
+        Raises:
+            BasicException: for all possible errors
+    '''
+
+    decoded_auth_info = await Tokens.decode_acess_token(
+        request_headers.Authorization
+    )
+
+    # DO NOT DELETE BY ID!!! It may cause security vulnerability because we can't deactivate JWT token and user can delete somone else!
+    # solution: redis SessionID
+    await AuthLogic.delete_user(
+        email=decoded_auth_info.email
+    )  
+
+    return deleteUserModels.ResponceSchema()

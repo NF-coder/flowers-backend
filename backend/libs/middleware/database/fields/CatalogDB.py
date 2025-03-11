@@ -22,7 +22,7 @@ class CatalogDB(declarative_base()):
     # TODO: refactor it to CompaniesInfo database
     supplierId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="CASCADE"), nullable=False) # FK
 
-    # We use only RUB this time.. So there's a problem for future developers)
+    # We use only RUB this time.. So it's a problem for future developers)
     cost: Mapped[int] = mapped_column(Integer, nullable=False)
     description: Mapped[str] = mapped_column(Text)
 

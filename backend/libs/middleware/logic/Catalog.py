@@ -76,5 +76,29 @@ class CatalogLogic():
                 )
             )
         return out
-            
     
+    async def search(
+            req: str,
+            start: int,
+            count: int,
+            sort: str
+        ) -> List[ProductSchema]:
+
+        productArr = await Catalog.search_in_title(
+            phrase=req,
+            start=start,
+            count=count,
+            sort=sort
+        )
+        out = []
+        for product in productArr:
+            supplier = await Users.get_info_by_id(id=product.supplierId)
+            
+            out.append(
+                await ProductSchema.parse(
+                    UserObj=supplier,
+                    ProductObj=product
+                )
+            )
+
+        return out

@@ -93,6 +93,19 @@ class CatalogAPI(BasicAPI):
         
         return out
 
+    async def get_all_my_products(self, userId: int) -> List[DatabaseType]:
+        statement = select(self.base)\
+            .where(
+                self.base.supplierId == userId,
+            ).order_by(
+                    self.base.id.desc()
+            )
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+        
+        return out
+
     async def get_product_by_id(self, productId: int) -> DatabaseType:
         statement = select(self.base)\
             .where(

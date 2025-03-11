@@ -55,26 +55,22 @@ async def getCatalog(
         for product in productArr
     ]
 
-# +
-#@router.get("/search", tags = ["catalog"], status_code=200)
-#async def search(
-#        request_query: Annotated[searchModels.RequestQueryModel, Query()],
-#    ) -> List[searchModels.ResponceSchemaItem]:
-#
-#    productArr = await CatalogLogic.search_in_title(
-#        phrase=request_query.request,
-#        start=request_query.start,
-#        count=request_query.count,
-#        sort=request_query.sort
-#    )
-#
-#    return [
-#        await getCatalogModels.ResponceSchemaItem.parse(
-#            CatalogObj=product
-#        )
-#        for product in productArr
-#    ]
-#
-#    serializer = await searchSerializer.start()
-#    print([await serializer.serializeItem(elem) for elem in productArr])
-#    return [await serializer.serializeItem(elem) for elem in productArr]
+# TODO: rewrite func
+@router.get("/search", tags = ["catalog"], status_code=200)
+async def search(
+        request_query: Annotated[searchModels.RequestQueryModel, Query()],
+    ) -> List[searchModels.ResponceSchemaItem]:
+
+    productArr = await CatalogLogic.search(
+        req=request_query.request,
+        start=request_query.start,
+        count=request_query.count,
+        sort=request_query.sort
+    )
+
+    return [
+        await searchModels.ResponceSchemaItem.parse(
+            CatalogObj=product
+        )
+        for product in productArr
+    ]

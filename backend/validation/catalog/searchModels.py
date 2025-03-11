@@ -8,6 +8,8 @@ from exceptions import BasicException
 from ..components.CostDict import CostDict
 from ..components.ReviewsDict import ReviewsDict
 
+from libs.middleware.logic.schemas.CatalogSchemas import *
+
 class RequestQueryModel(BaseModel):
     request: str
     start: int = 0,
@@ -31,3 +33,16 @@ class ResponceSchemaItem(BaseModel):
 
     cost: CostDict
     reviews: ReviewsDict
+
+    @staticmethod
+    async def parse(CatalogObj: ProductSchema) -> Self:
+        return ResponceSchemaItem(
+            title=CatalogObj.title,
+            author=CatalogObj.supplierEmail,
+            image=CatalogObj.titleImage,
+            productId=CatalogObj.productId,
+            cost=CostDict(
+                costNum=CatalogObj.cost
+            ),
+            reviews=ReviewsDict()
+        )

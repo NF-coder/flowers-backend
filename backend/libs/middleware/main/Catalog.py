@@ -100,6 +100,19 @@ class Catalog():
             for product in result
         ]
     
+    async def get_all_my_products(
+            self,
+            userId: int
+        ) -> list[ProductDTO]:
+
+        result = await self.CatalogAPI.get_my_products_time_desc(
+            userId = userId
+        )
+        return [ 
+            await ProductDTO.parse(product)
+            for product in result
+        ]
+    
     # BAD SEARCH FUNCTION!
     # TODO: REWRITE IT!
     async def search_in_title(

@@ -1,17 +1,22 @@
 from ..main.Users import Users
+from ..main.EmailAuth import EmailAuth
+from ..main.TgIdAuth import TgIdAuth
+
 from .schemas.AuthSchemas import UserSchema
 
 from typing_extensions import List, Self
 from exceptions import BasicException
 
 Users = Users()
+EmailAuth = EmailAuth()
+TgIdAuth = TgIdAuth()
 
 class AuthLogic():
     @staticmethod
     def __init__(self) -> Self:
         pass
     
-    async def sign_in(
+    async def sign_in_by_email(
             email: str,
             password: str
         ) -> UserSchema:
@@ -29,7 +34,40 @@ class AuthLogic():
         )
         return await UserSchema.parse(result)
     
-    async def register(
+    async def sign_in_by_tg_id(
+            tgId: int
+        ) -> UserSchema:
+        isCrrectPassword = await TgIdAuth.check_password_by_email(
+            email=email,
+            password=password
+        )
+        if not isCrrectPassword:
+            raise BasicException(
+                code=400,
+                description="Incorrect password"
+            )
+        result = Users.get_info_by_email(
+            email=email
+        )
+        return await UserSchema.parse(result)
+    
+    
+    async def register_by_email(
+            email: str,
+            password: str,
+            type: str
+        ) -> UserSchema:
+        await Users.register(
+            email=email,
+            password=password, 
+            type=type
+        )
+        new_user_data = await Users.get_info_by_email(
+            email=email
+        )
+        return await UserSchema.parse(new_user_data)
+    
+    async def register_by_tg_id(
             email: str,
             password: str,
             type: str

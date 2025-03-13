@@ -12,8 +12,6 @@ class UsersDB(declarative_base()):
     __tablename__ = 'Users'
 
     id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, primary_key=True)
-    email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
-    password: Mapped[bytes] = mapped_column(LargeBinary(), nullable=False)
     type: Mapped[str] = mapped_column(String(16), nullable=False)
 
     isEmailConfirmed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
@@ -28,8 +26,6 @@ class UsersDB(declarative_base()):
         '''
         return f"""<Users(
                         id={self.id},
-                        email={self.email},
-                        password={self.password},
                         type={self.type},
                         isEmailConfirmed={self.isEmailConfirmed},
                         isSupplierStatusConfirmed={self.isSupplierStatusConfirmed}

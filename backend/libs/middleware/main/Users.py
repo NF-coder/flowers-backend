@@ -43,31 +43,7 @@ class Users():
 
         return len(await self.UsersAPI.get_by_id(id)) == 1
     
-    async def register(self, email: str, password: str, type: str) -> None:
-        '''
-            Method that register new user.
-            Args:
-                email(str): user's email
-                password(str): user's password
-                type(str): user's account type
-            Returns:
-                NoneType:
-            Raises:
-                NotUnique: If email is not unique
-        '''
-        
-        if await self.is_email_registered(email):
-            raise NotUnique(
-                description="Email is not unique"
-            )
 
-        password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()) # encoding password
-        await self.UsersAPI.register(
-            email=email,
-            password=password,
-            type=type
-        )
-    
     async def get_info_by_email(self, email: str) -> UserDTO:
         '''
             Method that gets user from database.

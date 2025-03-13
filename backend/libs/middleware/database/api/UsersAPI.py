@@ -17,7 +17,7 @@ from ..fields.UsersDB import UsersDB
 DatabaseType = UsersDB
 
 class UsersAPI(BasicAPI):
-    async def register(self, email: str, password: bytes, type: str) -> None:
+    async def add_new_user(self, email: str, password: bytes, type: str) -> int:
         '''
             Method that registers users.
             Args:
@@ -28,8 +28,6 @@ class UsersAPI(BasicAPI):
                 NoneType:
         '''
         statement = self.base(
-            email=email,
-            password=password,
             type=type,
             isEmailConfirmed=False,
             isSupplierStatusConfirmed=False
@@ -37,19 +35,8 @@ class UsersAPI(BasicAPI):
         async with self.session() as session:
             session.add(statement)
             await session.commit()
-    
-    async def get_by_email(self, email: str) -> List[DatabaseType]:
-        '''
-            Method that returns all users with specified email.
-            Args:
-                email(str): user's email
-            Returns:
-                list: all user's data
-        '''
-        statement = select(self.base).where(self.base.email == email)
-        async with self.session() as session:
-            out = await session.execute(statement)
-        return out.all()
+        
+        return statement.id
     
     async def get_by_id(self, id: int) -> List[DatabaseType]:
         '''
@@ -89,19 +76,6 @@ class UsersAPI(BasicAPI):
                 NoneType:
         '''
         statement = delete(self.base).where(self.base.id == id)
-        async with self.session() as session:
-            await session.execute(statement)
-            await session.commit()
-    
-    async def delete_by_email(self, email: str) -> None:
-        '''
-            Method that deleted user with specified id.
-            Args:
-                email(str): User's email
-            Returns:
-                NoneType:
-        '''
-        statement = delete(self.base).where(self.base.email == email)
         async with self.session() as session:
             await session.execute(statement)
             await session.commit()
@@ -178,38 +152,6 @@ class UsersAPI(BasicAPI):
             out = await session.execute(statement)
         
         return out
-    
-    async def set_admin_status_by_email(self, email: str, status: bool) -> None:
-        '''
-            Method that makes user admin
-            Args:
-                email(str): user's email
-                status(bool): new user admin status
-            Returns:
-                NoneType:
-        '''
-        statement = update(self.base).where(self.base.email == email).values(
-            isAdmin=status
-        )
-        async with self.session() as session:
-            await session.execute(statement)
-            await session.commit()
-
-    async def set_supplier_status_by_email(self, email: str, status: bool) -> None:
-        '''
-            Method that sets/unsets isSupplierStatusConfirmed for the specified user 
-            Args:
-                email(str): user's email
-                status(bool): new user admin status
-            Returns:
-                NoneType:
-        '''
-        statement = update(self.base).where(self.base.email == email).values(
-            isSupplierStatusConfirmed=status
-        )
-        async with self.session() as session:
-            await session.execute(statement)
-            await session.commit()
     
     async def set_supplier_status_by_id(self, id: int, status: bool) -> None:
         '''

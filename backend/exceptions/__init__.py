@@ -1,2 +1,2 @@
 from .basic_exception import *
-from .database_exceptions import *
+from ...v2.db_services.Users.exceptions.database_exceptions import *

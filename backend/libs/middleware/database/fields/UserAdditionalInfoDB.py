@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from sqlalchemy.ext.declarative import declarative_base
 
-from .UsersDB import UsersDB
+from ......v2.db_services.Users.database.UsersDB import UsersDB
 
 # TODO: rewrite using foreign keys and relations!
 class UserAdditionalInfoDB(declarative_base()):

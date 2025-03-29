@@ -13,9 +13,9 @@ from database.UsersDB import UsersDB
 from schemas.UsersSchemas import *
 from schemas.RPCSchemas import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class Users():
     def __init__(self) -> None:
@@ -29,7 +29,7 @@ class Users():
     @app.grpc_method()
     async def add_new_user(self, request: AddNewUserRequest) -> UserIdModel:
         return UserIdModel(
-            id=await self.UsersAPI.add_new_user(
+            userId=await self.UsersAPI.add_new_user(
                 type=request.type
             )
         )
@@ -45,7 +45,7 @@ class Users():
         '''
 
         return IsIdRegistredRes(
-            state=(await self.UsersAPI.get_by_id(request.id)) == 1
+            state=(await self.UsersAPI.get_by_id(request.userId)) == 1
         )
     
     @app.grpc_method()
@@ -60,12 +60,12 @@ class Users():
                 NotExist: if no users with specified id
         '''
 
-        if not (await self.is_id_registered(request.id)):
-            raise NotExist(description = "User does not exist")
-        
-        userInfo = await self.UsersAPI.get_by_id(request.id)
+        userInfo = await self.UsersAPI.get_by_id(request.userId)
 
-        return await UserDTO.parse(userInfo)
+        if userInfo == 0:
+            raise NotExist(description = "User does not exist")
+
+        return await UserDTO.parse(userInfo[0])
 
     '''
     async def check_password_by_email(self, email: str, password: str) -> bool:
@@ -100,7 +100,7 @@ class Users():
         '''
 
         await self.UsersAPI.set_email_confirmation_status_by_id(
-            id=request.id,
+            id=request.userId,
             status=True
         )
         return EmptyModel()
@@ -116,7 +116,7 @@ class Users():
                 NoneType:
         '''
         await self.UsersAPI.delete_by_id(
-            id=request.id
+            id=request.userId
         )
         return EmptyModel()
     
@@ -153,7 +153,7 @@ class Users():
             )
         else:
             raise Developing(description="Sorry, I not implemented some filters")
-    
+        print(result)
         return await UserDTOArray.parse([
             await UserDTO.parse(userInfo)
             for userInfo in result
@@ -184,7 +184,7 @@ class Users():
         '''
         
         await self.UsersAPI.set_supplier_status_by_id(
-            id=request.id,
+            id=request.userId,
             status=True
         )
 

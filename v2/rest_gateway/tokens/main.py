@@ -1,4 +1,4 @@
-from settings import SecurityConfig
+from settings.Settings import SecuritySettings
 
 # Encryption
 import bcrypt
@@ -19,13 +19,13 @@ class Tokens():
     async def get_acess_token(**kwargs) -> str:
         exp = int(
                 datetime.timestamp(
-                    datetime.now(timezone.utc) + timedelta(minutes=SecurityConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
+                    datetime.now(timezone.utc) + timedelta(minutes=SecuritySettings.ACCESS_TOKEN_EXPIRE_MINUTES)
                 )
             )
         payload = kwargs
         payload["exp"] = exp
 
-        return jwt.encode(payload, key = SecurityConfig.SECURITY_KEY, algorithm = SecurityConfig.ALGORYTM), exp
+        return jwt.encode(payload, key = SecuritySettings.SECURITY_KEY, algorithm = SecuritySettings.ALGORYTM), exp
     
     # why static analizer does not sees JWTInfo object?
     async def decode_acess_token(token: str) -> JWTInfo:
@@ -33,8 +33,8 @@ class Tokens():
         try:
             payload = jwt.decode(
                 token,
-                key = SecurityConfig.SECURITY_KEY,
-                algorithms = [SecurityConfig.ALGORYTM]
+                key = SecuritySettings.SECURITY_KEY,
+                algorithms = [SecuritySettings.ALGORYTM]
             )
 
             return JWTInfo.set_from_dict(
@@ -49,7 +49,7 @@ class Tokens():
         token,
         isAdmin: bool = False,
         isConfirmedSupplier: bool = False,
-        isEmailConfirmed: bool = False
+        isConfirmed: bool = False
     ) -> None:
 
         if isAdmin and not token.isAdmin:
@@ -64,7 +64,7 @@ class Tokens():
                 description="You should be supplier and may have supplier status confirmed!"
             )
         
-        if isEmailConfirmed and token.isEmailConfirmed:
+        if isConfirmed and token.isConfirmed:
             raise NotEnoughPremissions(
                 description="Your email should be confirmed!"
             )

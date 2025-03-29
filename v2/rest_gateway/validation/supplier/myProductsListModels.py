@@ -7,7 +7,7 @@ from exceptions import BasicException
 
 from ..components.CostDict import CostDict
 from ..components.ReviewsDict import ReviewsDict
-from libs.middleware.logic.schemas.SupplierSchemas import ProductSchema
+from api.commands.schemas.SupplierCommandsSchemas import ProductSchema
 
 class RequestHeaderModel(BearerTokenTemplate):
     '''
@@ -30,14 +30,14 @@ class ResponceItemSchema(BaseModel):
     title: str = Field(
         example="Букет из чего-то там"
     )
-    author: str = Field(
-        example="example@example.com",
+    author: int = Field(
+        example=1,
     )
     image: str = Field(
         example="http://example.com/example.png"
     )
     productId: int = Field(
-        examples=[1]
+        example=1
     )
 
     cost: CostDict
@@ -46,7 +46,7 @@ class ResponceItemSchema(BaseModel):
     async def parse(ProductObj: ProductSchema) -> Self:
         return ResponceItemSchema(
             title=ProductObj.title,
-            author=ProductObj.supplierEmail,
+            author=ProductObj.supplierId,
             image=ProductObj.titleImage,
             productId=ProductObj.productId,
 

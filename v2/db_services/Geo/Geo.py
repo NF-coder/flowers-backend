@@ -7,9 +7,9 @@ from database.GeoDB import GeoDB
 from schemas.GeoSchemas import *
 from schemas.RPCSchemas import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class Geo():
     def __init__(self) -> None:
@@ -45,6 +45,6 @@ class Geo():
 
 app.configure_service(
     cls=Geo(),
-    port=50505
+    port=50506
 )
 app.run()

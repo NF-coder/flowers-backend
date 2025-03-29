@@ -5,18 +5,27 @@
 from fastapi import APIRouter, Header, Body
 from typing import Dict, Any, Annotated
 
-from settings import MainConfig
 from validation.auth import signInModels, confirmEmailModels, registerBasicModels, deleteUserModels
 
-
-from libs.middleware.logic.Auth import AuthLogic
-from libs.tokens import Tokens
+from tokens import Tokens
 
 from exceptions.basic_exception import BasicException
+
+from simple_rpc import *
+
+from .commands.AuthCommands import AuthCommands
 
 router = APIRouter(
     prefix="/auth",
     tags=["auth"]
+)
+
+client = GrpcClient(
+    port=50512,
+    proto_file_relpath="api/protos/AuthLogic.proto"
+)
+commands = AuthCommands(
+    client = client
 )
 
 # +
@@ -44,7 +53,7 @@ async def signIn(
         request_headers.Authorization
     )
     
-    user = await AuthLogic.sign_in(
+    user = await commands.sign_in_by_email(
         email=decoded_auth_info.email,
         password=decoded_auth_info.password
     )
@@ -76,7 +85,7 @@ async def registerBasic(
             BasicException: for all possible errors
     '''
 
-    user = await AuthLogic.register(
+    user = await commands.register_by_email(
         email=request_body.email,
         password=request_body.password,
         type=request_body.type

@@ -13,9 +13,9 @@ from database.ProductAdditionalImagesDB import ProductAdditionalImagesDB
 from schemas.ProductAdditionalImagesSchemas import *
 from schemas.RPCSchemas import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class ProductAdditionalImages():
     def __init__(self) -> Self:
@@ -40,6 +40,7 @@ class ProductAdditionalImages():
                 imageUrl=img,
                 productId=request.productId
             )
+        return EmptyModel()
     
     @app.grpc_method()
     async def get_images_by_productId(
@@ -47,10 +48,10 @@ class ProductAdditionalImages():
             request: ProductIdModel
         ) -> AdditionalImagesDTOArray:
         result = await self.ProductAdditionalImagesAPI.get_images_url_by_productId(
-                productId=ProductIdModel.productId
+            productId=request.productId
         )
         return AdditionalImagesDTOArray(
-            AdditionalImagesDTOArray= [
+            AdditionalImagesDTOArray=[
                 AdditionalImagesDTO(
                     id=image.id,
                     productId=image.productId,
@@ -62,6 +63,6 @@ class ProductAdditionalImages():
 
 app.configure_service(
     cls=ProductAdditionalImages(),
-    port=50505
+    port=50504
 )
 app.run()

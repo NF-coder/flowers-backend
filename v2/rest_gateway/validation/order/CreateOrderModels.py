@@ -1,4 +1,4 @@
-from typing_extensions import Self, List, Optional
+from typing_extensions import Self, List, Optional, Annotated
 from pydantic import BaseModel, Field, field_validator
 
 from exceptions import BasicException
@@ -27,7 +27,8 @@ class CreateOrderBody(BaseModel):
     )
 
 
-    ProductIdArray: List[int] = List[Field(examples=[1,2,3])]
+    ProductIdArray: Annotated[list[int], Field(examples=[1,2,3])]
+
 
 class ResponceSchema(BaseModel):
     status: str = Field(

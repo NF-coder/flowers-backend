@@ -9,9 +9,9 @@ from database.OrderDB import OrderDB
 from schemas.OrderSchemas import *
 from schemas.RPCScheams import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class Order():
     def __init__(self) -> Self:
@@ -132,6 +132,6 @@ class Order():
 
 app.configure_service(
     cls=Order(),
-    port=50101
+    port=50503
 )
 app.run()

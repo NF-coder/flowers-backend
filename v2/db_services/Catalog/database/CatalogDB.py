@@ -1,10 +1,5 @@
-from sqlalchemy import String, Integer, Column, LargeBinary, ForeignKey, Boolean, Text
+from sqlalchemy import String, Integer, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
-
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import DeclarativeBase
-
-from ...Users.database.UsersDB import UsersDB
 
 from sqlalchemy.orm import Mapped, mapped_column
 

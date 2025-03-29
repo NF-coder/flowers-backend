@@ -1,17 +1,26 @@
 from fastapi import APIRouter, Header, Body, Query
 from typing import Dict, Any, Annotated, List
-
-from settings import MainConfig
 from validation.admin import listSuppliersRequestsModels, approveSuppliersRequestModels
 
-from libs.middleware.logic.Admin import AdminLogic
-from libs.tokens import Tokens
+from tokens import Tokens
 
 from exceptions.basic_exception import BasicException
+
+from simple_rpc import *
+
+from .commands.AdminCommands import AdminCommands
 
 router = APIRouter(
     prefix="/admin",
     tags=["admin"]
+)
+
+client = GrpcClient(
+    port=50511,
+    proto_file_relpath="api/protos/AdminLogic.proto"
+)
+commands = AdminCommands(
+    client = client
 )
 
 @router.get(
@@ -48,7 +57,7 @@ async def listSuppliersRequests(
         isAdmin=True
     )
 
-    users_array = await AdminLogic.list_suppliers_requests(
+    users_array = await commands.list_suppliers_requests(
         start=request_query.start,
         count=request_query.count,
         sort=request_query.sort
@@ -60,8 +69,6 @@ async def listSuppliersRequests(
         )
         for user in users_array
     ]
-        
-
 
 @router.post(
     "/approveSupplierRequest",
@@ -98,9 +105,8 @@ async def approveSupplierRequest(
         isAdmin=True
     )
 
-    await AdminLogic.approve_supplier_request(
-        id=request_body.id,
-        email=request_body.email,
+    await commands.approve_supplier_request(
+        id=request_body.id
     )
 
     return approveSuppliersRequestModels.ResponceSchema()

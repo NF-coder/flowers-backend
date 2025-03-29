@@ -20,7 +20,7 @@ class OrderDTO(BaseModel):
     userId: int
     productId: int
 
-    orderStatus: int
+    orderStatus: str
     orderCreatedTime: int
 
     @staticmethod
@@ -36,7 +36,8 @@ class OrderDTO(BaseModel):
             geoId=obj.geoId,
             userId=obj.userId,
             productId=obj.productId,
-            orderStatus=obj.orderStatus
+            orderStatus=obj.orderStatus,
+            orderCreatedTime=obj.orderCreatedTime.timestamp()//1
         )
 
 class OrderDTOArray(BaseModel):

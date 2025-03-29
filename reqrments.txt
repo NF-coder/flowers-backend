@@ -3,4 +3,3 @@ SQLAlchemy==2.0.38
 asyncpg==0.30.0
 bcrypt==4.0.1
 python-jose==3.3.0
-git+https://github.com/NF-coder/SimpleRPC.git

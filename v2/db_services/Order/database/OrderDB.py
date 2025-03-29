@@ -25,8 +25,8 @@ class OrderDB(declarative_base()):
     userId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="RESTRICT"), nullable=False) # FK
     productId: Mapped[int] = mapped_column(ForeignKey("Catalog.id", ondelete="RESTRICT"), nullable=False) # FK
 
-    orderStatus: Mapped[int] = mapped_column(String(32), nullable=False, default="Обрабатывается...")
-    orderCreatedTime: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    orderStatus: Mapped[str] = mapped_column(String(32), nullable=False, default="Обрабатывается...")
+    orderCreatedTime: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
 
     def __repr__(self):
         '''

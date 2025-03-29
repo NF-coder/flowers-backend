@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from exceptions import BasicException
 
-from settings import AuthConfig
+from settings.Settings import AuthSettings
 
 class RequestModel(BaseModel):
     '''
@@ -20,7 +20,7 @@ class RequestModel(BaseModel):
     '''
     email: str = Field(
         max_length=128,
-        pattern=AuthConfig.EMAIL_CHECKER_REGEX,
+        pattern=AuthSettings.EMAIL_CHECKER_REGEX,
         frozen=True,
         description="User email",
         example="example@example.com"
@@ -43,7 +43,7 @@ class RequestModel(BaseModel):
                     - code: `400`
                     - description: `Unprocassable type of account`
         '''
-        if type not in AuthConfig.AVAILABLE_ACCOUNT_TYPES:
+        if type not in AuthSettings.AVAILABLE_ACCOUNT_TYPES:
             raise BasicException(400, 'Unprocassable type of account')
         return type
 

@@ -44,4 +44,4 @@ class ProductAdditionalImagesAPI(BasicAPI):
 
         async with self.session() as session:
             out = await session.execute(statement)
-        return out
+        return out.scalars().all()

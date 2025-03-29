@@ -50,5 +50,5 @@ class GeoAPI(BasicAPI):
         statement = select(self.base).where(self.base.id == id)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out[0]
+        return out.scalars().one()
 

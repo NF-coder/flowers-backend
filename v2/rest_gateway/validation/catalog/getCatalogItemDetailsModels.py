@@ -6,7 +6,7 @@ from exceptions import BasicException
 from ..components.CostDict import CostDict
 from ..components.ReviewsDict import ReviewsDict
 
-from libs.middleware.logic.schemas.CatalogSchemas import *
+from api.commands.schemas.CatalogCommandsSchemas import *
 
 class RequestModel(BaseModel):
     '''
@@ -23,8 +23,8 @@ class ResponceSchema(BaseModel):
     title: str = Field(
         example="Букет из чего-то там"
     )
-    author: str = Field(
-        example="example@example.com",
+    author: int = Field(
+        example=1,
     )
     titleImage: str = Field(
         example="http://example.com/example.png"
@@ -33,7 +33,7 @@ class ResponceSchema(BaseModel):
     additionalImages: List[
         Annotated[
             str, Field(
-            examples=["http://example.com/exampleAdditional.png"]
+            example="http://example.com/exampleAdditional.png"
             )
         ]
     ]
@@ -58,7 +58,7 @@ class ResponceSchema(BaseModel):
     async def parse(CatalogObj: ProductDetailsSchema) -> Self:
         return ResponceSchema(
             title=CatalogObj.title,
-            author=CatalogObj.supplierEmail,
+            author=CatalogObj.supplierId,
             titleImage=CatalogObj.titleImage,
             additionalImages=CatalogObj.additionalImages,
             productId=CatalogObj.productId,

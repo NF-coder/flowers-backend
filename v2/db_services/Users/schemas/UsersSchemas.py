@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from database.UsersDB import UsersDB
 
 class UserDTO(BaseModel):
-    userId: int
+    id: int
     type: str
     isConfirmed: bool
     isSupplierStatusConfirmed: bool

@@ -35,8 +35,12 @@ class BasicAPI:
         try:
             cls.engine = create_async_engine(cls.base_url)
             
-            #loop_ = asyncio.new_event_loop()
-            asyncio.ensure_future(BasicAPI.createAll(cls.engine, cls.base))
+            try:
+                loop_ = asyncio.get_event_loop()
+            except:
+                loop_ = asyncio.new_event_loop()
+            loop_.run_until_complete(BasicAPI.createAll(cls.engine, cls.base))
+    
     
             
             cls.session = sessionmaker(
@@ -57,4 +61,5 @@ class BasicAPI:
     @staticmethod
     async def createAll(engine, base):
         async with engine.begin() as conn:
+            await conn.run_sync(base.metadata.reflect)
             await conn.run_sync(base.metadata.create_all)

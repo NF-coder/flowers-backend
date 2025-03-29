@@ -8,9 +8,9 @@ from database.EmailAuthDB import EmailAuthDB
 
 from schemas.RPCScheams import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class EmailAuth():
     def __init__(self) -> None:
@@ -46,7 +46,8 @@ class EmailAuth():
             status=bcrypt.checkpw(
                 request.password.encode(),
                 user_info[0].password
-            )
+            ),
+            userId=user_info[0].userId
         )
 
 # SimpleRPC server startup

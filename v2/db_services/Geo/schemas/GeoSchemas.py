@@ -10,7 +10,7 @@ class GeoDTO(BaseModel):
     country: str
     city: str
     street: str
-    building: int
+    building: str
     flat: str
 
     @staticmethod

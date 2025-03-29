@@ -14,15 +14,8 @@ class RequestBodyModel(BaseModel):
     '''
         Request body validator for /auth/listSuppliersRequests
         Attributes:
-            email (str): user's email
             id (int): user's id
-        ## WARNING!
-            It doesn't check if one of email/id specified
     '''
-    email: str = Field(
-        default=None,
-        description="User email"
-    )
     id: int = Field(
         default=None,
         description="User id"

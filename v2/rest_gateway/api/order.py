@@ -1,18 +1,27 @@
 from fastapi import APIRouter, Header, Body, Query
 from typing import Dict, Any, Annotated, List
 
-from settings import MainConfig
 from validation.order import CreateOrderModels, OrderInfoModels, myActiveOrdersModels, CancelOrderModels
 
-from libs.middleware.logic.Order import OrderLogic
-
-from libs.tokens import Tokens
+from tokens import Tokens
 
 from exceptions.basic_exception import BasicException
+
+from simple_rpc import GrpcClient
+
+from .commands.OrderCommands import OrderCommands
 
 router = APIRouter(
     prefix="/order",
     tags=["order"]
+)
+
+client = GrpcClient(
+    port=50514,
+    proto_file_relpath="api/protos/OrderLogic.proto"
+)
+commands = OrderCommands(
+    client = client
 )
 
 @router.post(
@@ -30,7 +39,7 @@ async def createOrder(
         request_header.Authorization
     )
 
-    OrderLogic.create_order(
+    commands.create_order(
         country=request_body.Geo.Country,
         city=request_body.Geo.City,
         street=request_body.Geo.Street,
@@ -63,7 +72,7 @@ async def orderInfo(
         request_header.Authorization
     )
 
-    orderInfo = await OrderLogic.order_info(
+    orderInfo = await commands.order_info(
         id=request_query.orderId
     )
 
@@ -86,7 +95,7 @@ async def myActiveOrders(
         request_header.Authorization
     )
 
-    ordersArr = await OrderLogic.get_active_by_userId(
+    ordersArr = await commands.get_active_by_userId(
         userId=decoded_auth_info.id
     )
 

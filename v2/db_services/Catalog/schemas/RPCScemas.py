@@ -16,3 +16,10 @@ class GetMyProductsRequest(BaseModel):
     start: int
     count: int
     sort: str
+
+class AddProductRequest(BaseModel):
+    title: str
+    titleImageUrl: str
+    costNum: int
+    description: str
+    authorId: int

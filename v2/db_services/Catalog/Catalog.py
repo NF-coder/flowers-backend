@@ -9,9 +9,9 @@ from database.CatalogDB import CatalogDB
 from schemas.CatalogSchemas import *
 from schemas.RPCScemas import *
 
-from simple_rpc.v2.server import GrpcServerV2
+from simple_rpc import GrpcServer
 
-app = GrpcServerV2()
+app = GrpcServer()
 
 class Catalog():
     def __init__(self) -> Self:
@@ -60,12 +60,9 @@ class Catalog():
         )
         return await ProductDTO.parse(product)
 
+    @app.grpc_method()
     async def add_product(self,
-            title: str,
-            titleImageUrl: str,
-            costNum: int,
-            description: str,
-            authorId: int
+            request: AddProductRequest
         ) -> ProductIdModel:
         '''
             Method that creates product
@@ -73,11 +70,11 @@ class Catalog():
 
         return ProductIdModel(
             productId=await self.CatalogAPI.create_product(
-                title=title,
-                titleImageUrl=titleImageUrl,
-                costNum=costNum,
-                description=description,
-                authorId=authorId
+                title=request.title,
+                titleImageUrl=request.titleImageUrl,
+                costNum=request.costNum,
+                description=request.description,
+                authorId=request.authorId
             )
         )
     
@@ -116,7 +113,7 @@ class Catalog():
         ) -> ProductDTOArray:
 
         result = await self.CatalogAPI.get_my_products_time_desc(
-            userId = UserIdModel.userId
+            userId = request.userId
         )
         return ProductDTOArray(
             productDTOArray=[ 

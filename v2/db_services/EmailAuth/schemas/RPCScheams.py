@@ -17,4 +17,5 @@ class CheckPasswordRequest(BaseModel):
     password: str
 
 class CheckPasswordResponce(BaseModel):
-    status: str
+    status: bool
+    userId: int

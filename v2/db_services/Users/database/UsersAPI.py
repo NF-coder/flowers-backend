@@ -49,7 +49,7 @@ class UsersAPI(BasicAPI):
         statement = select(self.base).where(self.base.id == id)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out.all()
+        return out.scalars().all()
     
     async def set_confirmation_status_by_id(self, id: int, status: bool) -> None:
         '''
@@ -100,7 +100,7 @@ class UsersAPI(BasicAPI):
             Returns:
                 NoneType:
         '''
-        statement = select(self.base.id)\
+        statement = select(self.base)\
             .where(
                 and_(
                     self.base.type == "supplier" ,
@@ -115,7 +115,7 @@ class UsersAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
     
     async def find_suppliers_with_status_descending(
             self,
@@ -151,7 +151,7 @@ class UsersAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
     
     async def set_supplier_status_by_id(self, id: int, status: bool) -> None:
         '''

@@ -52,7 +52,7 @@ class OrderAPI(BasicAPI):
         statement = select(self.base).where(self.base.id == id)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out[0]
+        return out.scalars().one()
     
     async def get_by_productId(
             self,
@@ -62,7 +62,7 @@ class OrderAPI(BasicAPI):
         statement = select(self.base).where(self.base.productId == productId)
         async with self.session() as session:
             out = await session.execute(statement)
-        return out
+        return out.scalars().all()
 
     async def set_status_by_id(
             self,
@@ -118,7 +118,7 @@ class OrderAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
 
-        return out
+        return out.scalars().all()
     
     async def get_active_orders_by_userId(
             self,
@@ -136,7 +136,7 @@ class OrderAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
 
-        return out
+        return out.scalars().all()
     
     async def get_all_active_orders(
             self
@@ -152,7 +152,7 @@ class OrderAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
 
-        return out
+        return out.scalars().all()
     
     async def get_all_active_orders_with_productId(
             self,
@@ -170,4 +170,4 @@ class OrderAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
 
-        return out
+        return out.scalars().all()

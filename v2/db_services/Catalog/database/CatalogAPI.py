@@ -6,10 +6,10 @@ from sqlalchemy import and_
 
 from typing import Self, Dict, List
 
-from ....backend.libs.middleware.database.api.BasicAPI import BasicAPI
+from .BasicAPI import BasicAPI
 
 # For type annotations
-from ....backend.libs.middleware.database.fields.CatalogDB import CatalogDB
+from .CatalogDB import CatalogDB
 DatabaseType = CatalogDB
 
 class CatalogAPI(BasicAPI):
@@ -54,7 +54,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
 
     async def get_all_products_time_upsc(self, start: int, count: int) -> List[DatabaseType]:
         statement = select(self.base)\
@@ -65,7 +65,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
 
     async def get_my_products_time_desc(self, userId: int, start: int, count: int) -> List[DatabaseType]:
         statement = select(self.base)\
@@ -78,7 +78,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
 
     async def get_my_products_time_upsc(self, userId: int, start: int, count: int) -> List[DatabaseType]:
         statement = select(self.base)\
@@ -91,7 +91,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
 
     async def get_all_my_products(self, userId: int) -> List[DatabaseType]:
         statement = select(self.base)\
@@ -104,7 +104,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
 
     async def get_product_by_id(self, productId: int) -> DatabaseType:
         statement = select(self.base)\
@@ -115,7 +115,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out[0]
+        return out.scalars().one()
 
     async def search_title_contains_time_upsc(
             self,
@@ -133,7 +133,7 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()
     
     async def search_title_contains_time_desc(
             self,
@@ -151,4 +151,4 @@ class CatalogAPI(BasicAPI):
         async with self.session() as session:
             out = await session.execute(statement)
         
-        return out
+        return out.scalars().all()

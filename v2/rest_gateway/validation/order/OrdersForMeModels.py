@@ -6,7 +6,7 @@ from exceptions import BasicException
 from ..components.GeoDict import GeoDict
 from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
-from libs.middleware.logic.schemas.OrderSchemas import *
+from api.commands.schemas.OrderCommandsSchemas import *
 
 class OrdersForMeHeader(BearerTokenTemplate):
     pass
@@ -34,7 +34,7 @@ class ResponceItemSchema(BaseModel):
                 Flat=OrderObj.flat
             ),
             orderStatus=OrderObj.orderStatus,
-            orderCreatedTime=OrderObj.orderCreatedTime.timestamp()//1,
+            orderCreatedTime=OrderObj.orderCreatedTimestamp,
             costomerPhone=OrderObj.phoneNumber,
             customerFirstName=OrderObj.costumerFirstName,
             customerSecondName=OrderObj.costumerSecondName,

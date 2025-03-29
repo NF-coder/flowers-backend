@@ -1,22 +1,28 @@
 from fastapi import APIRouter, Header, Body, Query
 from typing import Dict, Any, Annotated, List
 
-from settings import MainConfig
 from validation.supplier import addProductModels, myProductsListModels, setOrderStatusModels, finishOrderModels, supplierReportModels
 
-#for fustfunc endpoint
 from validation.order import OrdersForMeModels
 
-from libs.tokens import Tokens
+from tokens import Tokens
 
 from exceptions.basic_exception import BasicException
 
-from libs.middleware.logic.Supplier import SupplierLogic
-from libs.middleware.logic.Catalog import CatalogLogic
+from simple_rpc import GrpcClient
+from .commands.SupplierCommands import SupplierCommands
 
 router = APIRouter(
     prefix="/supplier",
     tags=["supplier"]
+)
+
+client = GrpcClient(
+    port=50514,
+    proto_file_relpath="api/protos/OrderLogic.proto"
+)
+commands = SupplierCommands(
+    client = client
 )
 
 @router.post(
@@ -38,7 +44,7 @@ async def addProduct(
         isConfirmedSupplier=True
     )
 
-    await SupplierLogic.add_product(
+    await commands.add_product(
         title=request_body.title,
         titleImageUrl=request_body.titleImage,
         costNum=request_body.cost.costNum,
@@ -68,7 +74,7 @@ async def myProductsList(
         isConfirmedSupplier=True
     )
     
-    productArr = await SupplierLogic.my_products_list(
+    productArr = await commands.my_products_list(
         userId=decoded_auth_info.id,
         start=request_query.start,
         count=request_query.count,

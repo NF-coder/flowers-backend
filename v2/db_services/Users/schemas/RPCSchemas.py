@@ -2,7 +2,7 @@ from typing_extensions import Self, Literal, Optional
 from pydantic import BaseModel, Field
 
 class UserIdModel(BaseModel):
-    id: int
+    userId: int
 
 class IsIdRegistredRes(BaseModel):
     state: bool

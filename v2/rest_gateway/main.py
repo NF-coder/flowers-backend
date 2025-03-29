@@ -4,7 +4,7 @@
     For more info see docstrings in api directory!
 '''
 
-from settings import MainConfig
+from settings.Settings import Settings
 
 from fastapi import FastAPI, Query, HTTPException, Request, APIRouter
 from fastapi.exceptions import RequestValidationError
@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.utils import get_openapi
 
-from .api import auth, admin, catalog, order, supplier
+from api import auth, admin, catalog, order, supplier
 from exceptions.basic_exception import BasicException
 
 import asyncio
@@ -27,9 +27,9 @@ responses = {
 
 app = FastAPI(
     title="Flowers API",
-    version="0.1.1",
+    version="0.2.0",
     responses={**responses},
-    root_path=f"/api/v{MainConfig.API_VERSION}"
+    root_path=f"/api/v{Settings.API_VERSION}"
 )
 
 origins = ["*"]
@@ -104,7 +104,7 @@ async def validationException_handler(request: Request, exc: RequestValidationEr
     )
 
 @app.get(
-    f'/api/v{MainConfig.API_VERSION}/ping',
+    f'/api/v{Settings.API_VERSION}/ping',
     summary="ping",
     status_code=200
 )

@@ -5,7 +5,7 @@ from ..components.BeraerTokenTemplate import BearerTokenTemplate
 
 from exceptions import BasicException
 
-from libs.middleware.logic.schemas.AdminSchemas import *
+from api.commands.schemas.AdminCommandsScemas import *
 
 class RequestHeaderModel(BearerTokenTemplate):
     '''
@@ -39,10 +39,6 @@ class ResponceSchemaItem(BaseModel):
             email (str): user's email
             id (int): user's id
     '''
-    email: str = Field(
-        example="example@example.com",
-        description="User email"
-    )
     id: int = Field(
         example=1,
         description="User id"
@@ -51,6 +47,5 @@ class ResponceSchemaItem(BaseModel):
     @staticmethod
     async def parse(UserObj: UserSchema) -> Self:
         return ResponceSchemaItem(
-            email=UserObj.email,
             id=UserObj.userId
         )

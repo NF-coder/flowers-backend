@@ -18,6 +18,7 @@ router = APIRouter(
 
 client = GrpcClient(
     port=50514,
+    ip="buisness_logic",
     proto_file_relpath="api/protos/OrderLogic.proto"
 )
 commands = OrderCommands(
@@ -25,7 +26,7 @@ commands = OrderCommands(
 )
 
 @router.post(
-    "/createOrder",
+    "/create",
     tags=["order"],
     summary="Создание заказа",
     status_code=201
@@ -36,10 +37,10 @@ async def createOrder(
     ) -> CreateOrderModels.ResponceSchema:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
 
-    commands.create_order(
+    await commands.create_order(
         country=request_body.Geo.Country,
         city=request_body.Geo.City,
         street=request_body.Geo.Street,
@@ -52,28 +53,29 @@ async def createOrder(
         secondName=request_body.SecondName,
         comment=request_body.Comment,
         phoneNumber=request_body.PhoneNumber,
-        productId=request_body.ProductIdArray
+
+        productIdArray=request_body.ProductIdArray
     )
 
     return CreateOrderModels.ResponceSchema()
 
 @router.get(
-    "/orderInfo",
+    "/list/{order_id}",
     tags=["order"],
     summary="Информация о заказе по идентификатору",
     status_code=200
 )
 async def orderInfo(
         request_header: Annotated[OrderInfoModels.OrderInfoHeader, Header()],
-        request_query: Annotated[OrderInfoModels.OrderInfoQuery, Query()],
+        order_id: int,
     ) -> OrderInfoModels.ResponceSchema:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
 
     orderInfo = await commands.order_info(
-        id=request_query.orderId
+        orderId=order_id
     )
 
     return await OrderInfoModels.ResponceSchema.parse(
@@ -82,7 +84,7 @@ async def orderInfo(
 
 
 @router.get(
-    "/myActiveOrders",
+    "/active",
     tags=["order"],
     summary="Информация об активных заказах пользователя",
     status_code=200
@@ -90,39 +92,36 @@ async def orderInfo(
 async def myActiveOrders(
         request_header: Annotated[myActiveOrdersModels.MyActiveOrdersHeader, Header()],
     ) -> List[myActiveOrdersModels.ResponceItemSchema]:
-
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
-
     ordersArr = await commands.get_active_by_userId(
         userId=decoded_auth_info.id
     )
-
     return [
-        myActiveOrdersModels.ResponceItemSchema.parse(
+        await myActiveOrdersModels.ResponceItemSchema.parse(
             OrderObj=orderInfo
         )
         for orderInfo in ordersArr
     ]
 
 @router.post(
-    "/cancelOrder",
+    "/cancel/{order_id}",
     tags=["order"],
     summary="Отмена заказа",
     status_code=200
 )
 async def cancelOrder(
         request_header: Annotated[CancelOrderModels.CancelOrderHeader, Header()],
-        request_body: Annotated[CancelOrderModels.CancelOrderBody, Body()],
+        order_id: int,
     ) -> CancelOrderModels.ResponceSchema:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
 
-    await OrderLogic.cancel_by_id(
-        id=request_body.orderId
+    await commands.cancel_by_id(
+        id=order_id
     )
 
     return CancelOrderModels.ResponceSchema()

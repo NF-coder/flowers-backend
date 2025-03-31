@@ -12,7 +12,7 @@ class RequestModel(BaseModel):
     '''
         Request validator for /catalog/getCatalogItemDetails
         Attributes:
-            Authorization (str): user's Bearer token            
+            HTTPBearer (str): user's Bearer token            
     '''
     id: int = Field(
         description="Catalog item id",

@@ -60,7 +60,7 @@ class Order():
             ]
         )
     
-    
+    @app.grpc_method()
     async def set_status_by_id(
         self,
         request: SetStatusByIdRequest
@@ -69,7 +69,9 @@ class Order():
             id=request.id,
             newStatus=request.newStatus
         )
+        return EmptyModel()
     
+    @app.grpc_method()
     async def cancel_by_id(
         self,
         request: OrderIdModel
@@ -78,7 +80,9 @@ class Order():
             id=request.id,
             newStatus=True
         )
+        return EmptyModel()
 
+    @app.grpc_method()
     async def finish_by_id(
         self,
         request: OrderIdModel
@@ -87,13 +91,15 @@ class Order():
             id=request.id,
             newStatus=True
         )
+        return EmptyModel()
     
+    @app.grpc_method()
     async def get_active_by_userId(
         self,
-        userId: int,
+        request: UserIdModel,
     ) -> OrderDTOArray:
         result = await self.OrderAPI.get_active_orders_by_userId(
-            userId=userId
+            userId=request.userId
         )
         return OrderDTOArray(
             OrderDTOArray=[
@@ -102,6 +108,7 @@ class Order():
             ]
         )
     
+    @app.grpc_method()
     async def get_all_active(
         self,
         request: EmptyModel
@@ -114,6 +121,7 @@ class Order():
             ]
         )
 
+    @app.grpc_method()
     async def get_active_with_productId(
         self,
         request: ProductIdModel

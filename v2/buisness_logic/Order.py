@@ -12,10 +12,12 @@ from output_schemas.OrderSchemas import *
 
 OrdersClient = GrpcClient(
     port=50503,
+    ip="order_controller",
     proto_file_relpath="protos/Order.proto"
 )
 GeoClient = GrpcClient(
     port=50506,
+    ip="geo_controller",
     proto_file_relpath="protos/Geo.proto"
 )
 OrderCommandsManager = OrderCommands(

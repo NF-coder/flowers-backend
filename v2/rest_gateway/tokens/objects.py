@@ -9,10 +9,9 @@ from pydantic import BaseModel, Field, field_validator
 
 class JWTInfo(BaseModel):
     id: int
-    email: str
     expires: int
     type: str
-    isEmailConfirmed: bool
+    isConfirmed: bool
     isSupplierStatusConfirmed: bool
     isAdmin: bool
 
@@ -23,11 +22,10 @@ class JWTInfo(BaseModel):
         '''
         try:
             return JWTInfo(
-                email = data["email"],
-                id = data["id"],
+                id = data["userId"],
                 expires = data["exp"],
                 type = data["type"],
-                isEmailConfirmed = data["isEmailConfirmed"],
+                isConfirmed = data["isConfirmed"],
                 isSupplierStatusConfirmed = data["isSupplierStatusConfirmed"],
                 isAdmin = data["isAdmin"]
             )

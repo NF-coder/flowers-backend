@@ -14,26 +14,21 @@ service Users {
     rpc confirm_supplier_by_id(confirm_supplier_by_idRequest) returns (confirm_supplier_by_idResponce) {}
 }
 
-message get_info_by_idRequest {
+message delete_user_by_idRequest {
     int64 userId = 1;
-}
-message find_unconfirmed_suppliersRequest {
-    int64 start = 1;
-    int64 count = 2;
-    string sort = 3;
-}
-message delete_user_by_idResponce {
-}
-message confirm_supplier_by_idResponce {
 }
 message is_id_registeredResponce {
     bool state = 1;
 }
-message delete_user_by_idRequest {
+message find_unconfirmed_suppliersResponce {
+    repeated UserDTO usersArray = 1;
+}
+message delete_user_by_idResponce {
+}
+message get_info_by_idRequest {
     int64 userId = 1;
 }
-message confirm_supplier_by_idRequest {
-    int64 userId = 1;
+message confirm_userResponce {
 }
 message get_info_by_idResponce {
     int64 id = 1;
@@ -42,17 +37,10 @@ message get_info_by_idResponce {
     bool isSupplierStatusConfirmed = 4;
     bool isAdmin = 5;
 }
-message find_unconfirmed_suppliersResponce {
-    repeated UserDTO usersArray = 1;
-}
-message add_new_userRequest {
-    string type = 1;
-}
-message confirm_userRequest {
-    int64 userId = 1;
-}
-message add_new_userResponce {
-    int64 userId = 1;
+message find_unconfirmed_suppliersRequest {
+    int64 start = 1;
+    int64 count = 2;
+    string sort = 3;
 }
 message UserDTO {
     int64 id = 1;
@@ -61,8 +49,20 @@ message UserDTO {
     bool isSupplierStatusConfirmed = 4;
     bool isAdmin = 5;
 }
-message confirm_userResponce {
+message add_new_userResponce {
+    int64 userId = 1;
 }
 message is_id_registeredRequest {
     int64 userId = 1;
+}
+message confirm_supplier_by_idRequest {
+    int64 userId = 1;
+}
+message confirm_supplier_by_idResponce {
+}
+message confirm_userRequest {
+    int64 userId = 1;
+}
+message add_new_userRequest {
+    string type = 1;
 }

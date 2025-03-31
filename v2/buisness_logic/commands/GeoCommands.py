@@ -1,7 +1,9 @@
 from .schemas.GeoModels import *
 
+from simple_rpc import GrpcClient
+
 class GeoCommands():
-    def __init__(self, client) -> None:
+    def __init__(self, client: GrpcClient) -> None:
         self.add_geo__ = client.configure_command(
             functionName="add_geo",
             className="Geo"

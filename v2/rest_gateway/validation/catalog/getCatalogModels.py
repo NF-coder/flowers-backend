@@ -14,7 +14,7 @@ class RequestQueryModel(BaseModel):
     start: int = 0,
     count: int = 20,
     sort: Literal["time_upscending", "time_descending"] = "time_descending"
-    category: str # not used
+    # category: str # not used
 
 class ResponceSchemaItem(BaseModel):
     title: str = Field(

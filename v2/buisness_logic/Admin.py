@@ -9,6 +9,7 @@ import asyncio
 
 client = GrpcClient(
     port=50501,
+    ip="users_controller",
     proto_file_relpath="protos/Users.proto"
 )
 commands = UsersCommands(

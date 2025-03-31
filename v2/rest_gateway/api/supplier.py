@@ -18,15 +18,16 @@ router = APIRouter(
 )
 
 client = GrpcClient(
-    port=50514,
-    proto_file_relpath="api/protos/OrderLogic.proto"
+    port=50515,
+    ip="buisness_logic",
+    proto_file_relpath="api/protos/SupplierLogic.proto"
 )
 commands = SupplierCommands(
     client = client
 )
 
 @router.post(
-    "/addProduct",
+    "/add-product",
     tags=["supplier"],
     summary="Добавление товара",
     status_code=201
@@ -37,7 +38,7 @@ async def addProduct(
     ) -> addProductModels.ResponceSchema:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
@@ -56,7 +57,7 @@ async def addProduct(
     return addProductModels.ResponceSchema()
 
 @router.get(
-    "/myProductsList",
+    "/my-products",
     summary="Просмотр моих товаров",
     tags=["supplier"],
     status_code=200
@@ -67,7 +68,7 @@ async def myProductsList(
     ) -> List[myProductsListModels.ResponceItemSchema]:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
@@ -87,7 +88,7 @@ async def myProductsList(
     ]
 
 @router.get(
-    "/ordersForMe",
+    "/orders-for-me",
     summary="Заказы, которые сделали пользователи",
     tags=["supplier"],
     status_code=200
@@ -97,14 +98,14 @@ async def ordersForMe(
     ) -> List[OrdersForMeModels.ResponceItemSchema]:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
         isConfirmedSupplier=True
     )
     
-    myProductsArr = await SupplierLogic.orders_for_me(
+    myProductsArr = await commands.orders_for_me(
         userId=decoded_auth_info.id
     )
 
@@ -114,53 +115,53 @@ async def ordersForMe(
     ]
 
 @router.post(
-    "/setOrderStatus",
+    "/set-order-status/{order_id}",
     summary="Установка статуса обработки заказа",
     tags=["supplier"],
     status_code=200
 )
 async def setOrderStatus(
         request_header: Annotated[setOrderStatusModels.RequestHeaderModel, Header()],
-        request_query: Annotated[setOrderStatusModels.RequestQueryModel, Query()],
+        order_id: int,
         request_body: Annotated[setOrderStatusModels.RequestBodyModel, Body()],
     ) -> setOrderStatusModels.ResponceSchema:
     
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
         isConfirmedSupplier=True
     )
     
-    await SupplierLogic.set_status(
-        orderId=request_query.orderId,
+    await commands.set_status(
+        orderId=order_id,
         newStatus=request_body.newStatus
     )
 
     return setOrderStatusModels.ResponceSchema()
 
 @router.post(
-    "/finishOrder",
+    "/finish-order/{order_id}",
     summary="Завершение заказа",
     tags=["supplier"],
     status_code=200
 )
 async def finishOrder(
         request_header: Annotated[finishOrderModels.RequestHeaderModel, Header()],
-        request_query: Annotated[finishOrderModels.RequestQueryModel, Query()],
+        order_id: int
     ) -> finishOrderModels.ResponceSchema:
 
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_header.Authorization
+        request_header.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
         isConfirmedSupplier=True
     )
     
-    await SupplierLogic.finish_order(
-        orderId=request_query.orderId
+    await commands.finish_order(
+        orderId=order_id
     )
 
     return finishOrderModels.ResponceSchema()
@@ -171,7 +172,7 @@ async def finishOrder(
 #        request_header: Annotated[supplierReportModels.RequestHeaderModel, Header()]
 #    ) -> List:
 #    decoded_auth_info = await Tokens.decode_acess_token(
-#        request_header.Authorization
+#        request_header.HTTPBearer
 #    )
 #    await Tokens.checkPremissions(
 #        token=decoded_auth_info,

@@ -8,13 +8,9 @@ service CatalogLogic {
     rpc get_product_by_id(get_product_by_idRequest) returns (get_product_by_idResponce) {}
     rpc get_catalog_item_details(get_catalog_item_detailsRequest) returns (get_catalog_item_detailsResponce) {}
     rpc get_catalog(get_catalogRequest) returns (get_catalogResponce) {}
+    rpc search(searchRequest) returns (searchResponce) {}
 }
 
-message get_catalogRequest {
-    int64 start = 1;
-    int64 count = 2;
-    string sort = 3;
-}
 message get_product_by_idResponce {
     int64 productId = 1;
     int64 supplierId = 2;
@@ -23,8 +19,22 @@ message get_product_by_idResponce {
     int64 cost = 5;
     string description = 6;
 }
-message get_catalog_item_detailsRequest {
-    int64 id = 1;
+message searchResponce {
+    repeated ProductSchema ProductSchemasArray = 1;
+}
+message searchRequest {
+    string req = 1;
+    int64 start = 2;
+    int64 count = 3;
+    string sort = 4;
+}
+message ProductSchema {
+    int64 productId = 1;
+    int64 supplierId = 2;
+    string title = 3;
+    string titleImage = 4;
+    int64 cost = 5;
+    string description = 6;
 }
 message get_catalog_item_detailsResponce {
     int64 productId = 1;
@@ -35,16 +45,16 @@ message get_catalog_item_detailsResponce {
     string description = 6;
     repeated string additionalImages = 7;
 }
+message get_catalog_item_detailsRequest {
+    int64 id = 1;
+}
 message get_catalogResponce {
     repeated ProductSchema ProductSchemasArray = 1;
 }
-message ProductSchema {
-    int64 productId = 1;
-    int64 supplierId = 2;
-    string title = 3;
-    string titleImage = 4;
-    int64 cost = 5;
-    string description = 6;
+message get_catalogRequest {
+    int64 start = 1;
+    int64 count = 2;
+    string sort = 3;
 }
 message get_product_by_idRequest {
     int64 id = 1;

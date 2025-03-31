@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.utils import get_openapi
 
-from api import auth, admin, catalog, order, supplier
+from api import auth, admin, catalog, order, supplier, profile
 from exceptions.basic_exception import BasicException
 
 import asyncio
@@ -46,6 +46,7 @@ app.include_router(admin.router)
 app.include_router(supplier.router)
 app.include_router(catalog.router)
 app.include_router(order.router)
+app.include_router(profile.router)
 
 # -- MAIN BLOCK --
 

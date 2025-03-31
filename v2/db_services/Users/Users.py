@@ -1,7 +1,3 @@
-import traceback
-import asyncio
-import bcrypt
-
 from typing import Self, List
 
 from exceptions.database_exceptions import *
@@ -66,28 +62,6 @@ class Users():
             raise NotExist(description = "User does not exist")
 
         return await UserDTO.parse(userInfo[0])
-
-    '''
-    async def check_password_by_email(self, email: str, password: str) -> bool:
-        
-            Method that gets user from database by email.
-            Args:
-                email(str): user's email (in our case)
-            Returns:
-                NoneType:
-            Raises:
-                NotExist: if no users with specified email
-        
-
-        if not (await self.is_email_registered(email)):
-            raise NotExist(
-                description="User does not exist"
-            )
-        return bcrypt.checkpw(
-            password.encode(),
-            (await self.UsersAPI.get_by_email(email))[0]["password"]
-        )
-    '''
     
     @app.grpc_method()
     async def confirm_user(self, request: UserIdModel) -> EmptyModel:
@@ -99,7 +73,7 @@ class Users():
                 NoneType:
         '''
 
-        await self.UsersAPI.set_email_confirmation_status_by_id(
+        await self.UsersAPI.set_confirmation_status_by_id(
             id=request.userId,
             status=True
         )
@@ -153,25 +127,27 @@ class Users():
             )
         else:
             raise Developing(description="Sorry, I not implemented some filters")
-        print(result)
+
         return await UserDTOArray.parse([
             await UserDTO.parse(userInfo)
             for userInfo in result
         ])
     
-    '''
-    async def make_admin_by_email(self, email: str) -> None:
+    
+    async def make_admin_by_id(self, request: UserIdModel) -> EmptyModel:
+        '''
             Method that makes user admin
             Args:
-                email(str): User's email
+                id(int): User's id
             Returns:
                 NoneType:
-        
-        await self.UsersAPI.set_admin_status_by_email(
-            email=email,
+        '''
+        await self.UsersAPI.set_admin_status_by_id(
+            id=request.id,
             status=True
         )
-    '''
+        return EmptyModel()
+    
     
     @app.grpc_method()
     async def confirm_supplier_by_id(self, request: UserIdModel) -> EmptyModel:

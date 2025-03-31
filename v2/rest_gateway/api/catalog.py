@@ -17,6 +17,7 @@ router = APIRouter(
 
 client = GrpcClient(
     port=50513,
+    ip="buisness_logic",
     proto_file_relpath="api/protos/CatalogLogic.proto"
 )
 commands = CatalogCommands(
@@ -24,17 +25,17 @@ commands = CatalogCommands(
 )
 
 @router.get(
-    "/getCatalogItemDetails",
+    "/list/{item_id}",
     tags=["catalog"],
     summary="Получение деталей о товаре",
     status_code=200
 )
 async def getCatalogItemDetails(
-        request_query: Annotated[getCatalogItemDetailsModels.RequestModel, Query()],
+        item_id: int,
     ) -> getCatalogItemDetailsModels.ResponceSchema:
     
     item = await commands.get_catalog_item_details(
-        productId=request_query.id
+        productId=item_id
     )
 
     return await getCatalogItemDetailsModels.ResponceSchema.parse(
@@ -42,7 +43,7 @@ async def getCatalogItemDetails(
     ) 
 
 @router.get(
-    "/getCatalog",
+    "",
     tags=["catalog"],
     summary="Каталог товаров",
     status_code=200
@@ -64,13 +65,17 @@ async def getCatalog(
     ]
 
 # TODO: rewrite func
-@router.get("/search", tags = ["catalog"], status_code=200)
+@router.get(
+    "/search",
+    tags=["catalog"],
+    status_code=200
+)
 async def search(
         request_query: Annotated[searchModels.RequestQueryModel, Query()],
     ) -> List[searchModels.ResponceSchemaItem]:
 
-    productArr = await CatalogLogic.search(
-        req=request_query.request,
+    productArr = await commands.search(
+        request=request_query.request,
         start=request_query.start,
         count=request_query.count,
         sort=request_query.sort

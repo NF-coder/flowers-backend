@@ -12,7 +12,7 @@ class TgIdAuthDB(declarative_base()):
     __tablename__ = 'TgIdAuth'
 
     tgId: Mapped[int] = mapped_column(Integer, nullable=False, unique=True, primary_key=True)
-    userId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="DELETE"), nullable=False, unique=True)
+    userId: Mapped[int] = mapped_column(ForeignKey("Users.id", ondelete="CASCADE"), nullable=False, unique=True)
 
     def __repr__(self):
         '''

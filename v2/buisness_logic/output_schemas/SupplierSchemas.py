@@ -37,13 +37,13 @@ class OrderSchema(BaseModel):
     country: str
     city: str
     street: str
-    building: int
+    building: str
     flat: str
 
     userId: int
     productId: int
 
-    orderStatus: int
+    orderStatus: str
     orderCreatedTimestamp: int
 
     @staticmethod
@@ -67,7 +67,7 @@ class OrderSchema(BaseModel):
             productId = ProductObj.productId,
 
             orderStatus = ProductObj.orderStatus,
-            orderCreatedTimestamp = ProductObj.orderCreatedTime.timestamp()//1
+            orderCreatedTimestamp = ProductObj.orderCreatedTime
         )
     
 class ProductSchemasArray(BaseModel):

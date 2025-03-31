@@ -16,6 +16,9 @@ class OrderIdModel(BaseModel):
 class ProductIdModel(BaseModel):
     productId: int
 
+class UserIdModel(BaseModel):
+    userId: int
+
 class EmptyModel(BaseModel):
     pass
 

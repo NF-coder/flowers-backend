@@ -10,15 +10,14 @@ service EmailAuth {
     rpc check_password(check_passwordRequest) returns (check_passwordResponce) {}
 }
 
+message remove_auth_methodResponce {
+}
 message add_auth_methodResponce {
 }
 message add_auth_methodRequest {
     string email = 1;
     int64 userId = 2;
     string password = 3;
-}
-message remove_auth_methodRequest {
-    string email = 1;
 }
 message check_passwordResponce {
     bool status = 1;
@@ -28,5 +27,6 @@ message check_passwordRequest {
     string email = 1;
     string password = 2;
 }
-message remove_auth_methodResponce {
+message remove_auth_methodRequest {
+    string email = 1;
 }

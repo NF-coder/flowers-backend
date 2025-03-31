@@ -7,18 +7,13 @@ package SupplierLogicpkg;
 service SupplierLogic {
     rpc add_product(add_productRequest) returns (add_productResponce) {}
     rpc my_products_list(my_products_listRequest) returns (my_products_listResponce) {}
+    rpc orders_for_me(orders_for_meRequest) returns (orders_for_meResponce) {}
+    rpc set_status(set_statusRequest) returns (set_statusResponce) {}
+    rpc finish_order(finish_orderRequest) returns (finish_orderResponce) {}
 }
 
-message add_productRequest {
-    string title = 1;
-    string titleImageUrl = 2;
-    int64 costNum = 3;
-    string description = 4;
-    int64 authorId = 5;
-    repeated string additionalImagesUrls = 6;
-}
-message my_products_listResponce {
-    repeated ProductSchema ProductSchemasArray = 1;
+message orders_for_meResponce {
+    repeated OrderSchema OrderSchemasArray = 1;
 }
 message add_productResponce {
 }
@@ -30,9 +25,52 @@ message ProductSchema {
     int64 cost = 5;
     string description = 6;
 }
+message OrderSchema {
+    int64 orderId = 1;
+    string costumerFirstName = 2;
+    string costumerSecondName = 3;
+    string comment = 4;
+    string phoneNumber = 5;
+    bool isFinished = 6;
+    bool isCanceled = 7;
+    string country = 8;
+    string city = 9;
+    string street = 10;
+    string building = 11;
+    string flat = 12;
+    int64 userId = 13;
+    int64 productId = 14;
+    string orderStatus = 15;
+    int64 orderCreatedTimestamp = 16;
+}
+message set_statusRequest {
+    int64 orderId = 1;
+    string newStatus = 2;
+}
+message my_products_listResponce {
+    repeated ProductSchema ProductSchemasArray = 1;
+}
+message finish_orderResponce {
+}
 message my_products_listRequest {
     int64 userId = 1;
     int64 start = 2;
     int64 count = 3;
     string sort = 4;
+}
+message add_productRequest {
+    string title = 1;
+    string titleImageUrl = 2;
+    int64 costNum = 3;
+    string description = 4;
+    int64 authorId = 5;
+    repeated string additionalImagesUrls = 6;
+}
+message orders_for_meRequest {
+    int64 userId = 1;
+}
+message set_statusResponce {
+}
+message finish_orderRequest {
+    int64 orderId = 1;
 }

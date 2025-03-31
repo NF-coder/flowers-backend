@@ -13,14 +13,17 @@ import asyncio
 
 UsersClient = GrpcClient(
     port=50501,
+    ip="ussrs_controller",
     proto_file_relpath="protos/Users.proto"
 )
 CatalogClient = GrpcClient(
     port=50505,
+    ip="catalog_controller",
     proto_file_relpath="protos/Catalog.proto"
 )
 AdditionalImagesClient = GrpcClient(
     port=50504,
+    ip="product_additional_images_controller",
     proto_file_relpath="protos/ProductAdditionalImages.proto"
 )
 AdditionalImagesCommandsManager = AdditionalImagesCommands(
@@ -90,32 +93,25 @@ class CatalogLogic():
             ]
         )
     
+    @app.grpc_method()
     async def search(
             self,
-            req: str,
-            start: int,
-            count: int,
-            sort: str
-        ) -> List[ProductSchema]:
-
-        productArr = await Catalog.search_in_title(
-            phrase=req,
-            start=start,
-            count=count,
-            sort=sort
+            request: SearchReq
+        ) -> ProductSchemasArray:
+        products = await CatalogCommandsManager.search_in_title(
+            phrase=request.req,
+            start=request.start,
+            count=request.count,
+            sort=request.sort
         )
-        out = []
-        for product in productArr:
-            supplier = await Users.get_info_by_id(id=product.supplierId)
-            
-            out.append(
+        return ProductSchemasArray(
+            ProductSchemasArray=[
                 await ProductSchema.parse(
-                    UserObj=supplier,
                     ProductObj=product
                 )
-            )
-
-        return out
+                for product in products.productDTOArray
+            ]
+        )
 
 app.configure_service(
     cls=CatalogLogic(),

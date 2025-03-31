@@ -10,10 +10,26 @@ service Catalog {
     rpc add_product(add_productRequest) returns (add_productResponce) {}
     rpc get_my_products(get_my_productsRequest) returns (get_my_productsResponce) {}
     rpc get_all_my_products(get_all_my_productsRequest) returns (get_all_my_productsResponce) {}
+    rpc search_in_title(search_in_titleRequest) returns (search_in_titleResponce) {}
 }
 
+message get_my_productsResponce {
+    repeated ProductDTO productDTOArray = 1;
+}
+message get_productsResponce {
+    repeated ProductDTO productDTOArray = 1;
+}
+message get_product_by_idRequest {
+    int64 productId = 1;
+}
 message get_all_my_productsRequest {
     int64 userId = 1;
+}
+message search_in_titleRequest {
+    string phrase = 1;
+    int64 start = 2;
+    int64 count = 3;
+    string sort = 4;
 }
 message get_product_by_idResponce {
     int64 productId = 1;
@@ -23,13 +39,20 @@ message get_product_by_idResponce {
     int64 cost = 5;
     string description = 6;
 }
-message get_product_by_idRequest {
-    int64 productId = 1;
+message get_my_productsRequest {
+    int64 userId = 1;
+    int64 start = 2;
+    int64 count = 3;
+    string sort = 4;
 }
-message get_my_productsResponce {
-    repeated ProductDTO productDTOArray = 1;
+message add_productRequest {
+    string title = 1;
+    string titleImageUrl = 2;
+    int64 costNum = 3;
+    string description = 4;
+    int64 authorId = 5;
 }
-message get_productsResponce {
+message get_all_my_productsResponce {
     repeated ProductDTO productDTOArray = 1;
 }
 message ProductDTO {
@@ -43,21 +66,8 @@ message ProductDTO {
 message add_productResponce {
     int64 productId = 1;
 }
-message add_productRequest {
-    string title = 1;
-    string titleImageUrl = 2;
-    int64 costNum = 3;
-    string description = 4;
-    int64 authorId = 5;
-}
-message get_all_my_productsResponce {
+message search_in_titleResponce {
     repeated ProductDTO productDTOArray = 1;
-}
-message get_my_productsRequest {
-    int64 userId = 1;
-    int64 start = 2;
-    int64 count = 3;
-    string sort = 4;
 }
 message get_productsRequest {
     int64 start = 1;

@@ -1,7 +1,9 @@
 from .schemas.AuthModels import *
 
+from simple_rpc import GrpcClient
+
 class AuthCommands():
-    def __init__(self, client) -> None:
+    def __init__(self, client: GrpcClient) -> None:
         self.add_auth_by_email__ = client.configure_command(
             functionName="add_auth_method",
             className="EmailAuth"

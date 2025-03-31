@@ -11,7 +11,6 @@ class ProductSchema(BaseModel):
 
     @staticmethod
     async def parse(ProductObj) -> Self:
-        print(ProductObj)
         return ProductSchema(
             productId=ProductObj.productId,
             supplierId=ProductObj.supplierId,

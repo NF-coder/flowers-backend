@@ -3,12 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import select, update, delete, desc
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 from typing import Self, Dict, List
 from typing_extensions import Annotated
 
-from .....backend.libs.middleware.database.api.BasicAPI import BasicAPI
+from .BasicAPI import BasicAPI
 
 from exceptions.database_exceptions import NoDatabaseConnection
 
@@ -27,8 +27,20 @@ class TgIdAuthAPI(BasicAPI):
             await session.commit()
         
     async def remove_auth_method(self, tgId: int) -> None:
-        statement = delete(self.base).where(self.base.tgId == tgId)
+        statement = delete(self.base).where(
+            self.base.tgId == tgId,
+        )
 
         async with self.session() as session:
             session.add(statement)
             await session.commit()
+    
+    async def get_user_by_tgId(self, tgId: int) -> list[DatabaseType]:
+        statement = select(self.base).where(
+            self.base.tgId == tgId
+        )
+
+        async with self.session() as session:
+            out = await session.execute(statement)
+
+        return out.scalars().all()

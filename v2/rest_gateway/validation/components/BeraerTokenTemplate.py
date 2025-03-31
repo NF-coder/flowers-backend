@@ -8,15 +8,15 @@ class BearerTokenTemplate(BaseModel):
     '''
         Bearer token validator
         Attributes:
-            Authorization (str): Bearer token
+            HTTPBearer (str): Bearer token
     '''
-    Authorization: str = Field(
+    HTTPBearer: str = Field(
         default=None,
         example="Bearer AAA.BBB.CCC",
         description="Bearer auth token",
     )
 
-    @field_validator('Authorization', mode='after')
+    @field_validator('HTTPBearer', mode='after')
     @classmethod
     def check_basic_auth_token(cls: Self, token: str) -> str:
         '''

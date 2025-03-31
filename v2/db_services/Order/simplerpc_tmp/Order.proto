@@ -8,10 +8,16 @@ service Order {
     rpc create_order(create_orderRequest) returns (create_orderResponce) {}
     rpc get_by_id(get_by_idRequest) returns (get_by_idResponce) {}
     rpc get_by_productId(get_by_productIdRequest) returns (get_by_productIdResponce) {}
+    rpc set_status_by_id(set_status_by_idRequest) returns (set_status_by_idResponce) {}
+    rpc cancel_by_id(cancel_by_idRequest) returns (cancel_by_idResponce) {}
+    rpc finish_by_id(finish_by_idRequest) returns (finish_by_idResponce) {}
+    rpc get_active_by_userId(get_active_by_userIdRequest) returns (get_active_by_userIdResponce) {}
+    rpc get_all_active(get_all_activeRequest) returns (get_all_activeResponce) {}
+    rpc get_active_with_productId(get_active_with_productIdRequest) returns (get_active_with_productIdResponce) {}
 }
 
-message get_by_productIdRequest {
-    int64 productId = 1;
+message get_active_by_userIdResponce {
+    repeated OrderDTO OrderDTOArray = 1;
 }
 message create_orderRequest {
     int64 geoId = 1;
@@ -22,14 +28,7 @@ message create_orderRequest {
     string comment = 6;
     string phoneNumber = 7;
 }
-message get_by_productIdResponce {
-    repeated OrderDTO OrderDTOArray = 1;
-}
-message create_orderResponce {
-    int64 id = 1;
-}
-message get_by_idRequest {
-    int64 id = 1;
+message cancel_by_idResponce {
 }
 message OrderDTO {
     int64 orderId = 1;
@@ -45,6 +44,44 @@ message OrderDTO {
     string orderStatus = 11;
     int64 orderCreatedTime = 12;
 }
+message cancel_by_idRequest {
+    int64 id = 1;
+}
+message get_by_productIdResponce {
+    repeated OrderDTO OrderDTOArray = 1;
+}
+message get_by_productIdRequest {
+    int64 productId = 1;
+}
+message set_status_by_idRequest {
+    int64 id = 1;
+    string newStatus = 2;
+}
+message get_active_with_productIdRequest {
+    int64 productId = 1;
+}
+message finish_by_idResponce {
+}
+message set_status_by_idResponce {
+}
+message get_active_with_productIdResponce {
+    repeated OrderDTO OrderDTOArray = 1;
+}
+message get_by_idRequest {
+    int64 id = 1;
+}
+message get_all_activeResponce {
+    repeated OrderDTO OrderDTOArray = 1;
+}
+message get_active_by_userIdRequest {
+    int64 userId = 1;
+}
+message create_orderResponce {
+    int64 id = 1;
+}
+message finish_by_idRequest {
+    int64 id = 1;
+}
 message get_by_idResponce {
     int64 orderId = 1;
     string costumerFirstName = 2;
@@ -58,4 +95,6 @@ message get_by_idResponce {
     int64 productId = 10;
     string orderStatus = 11;
     int64 orderCreatedTime = 12;
+}
+message get_all_activeRequest {
 }

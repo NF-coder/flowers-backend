@@ -47,7 +47,7 @@ class OrderSchema(BaseModel):
             productId = ProductObj.productId,
 
             orderStatus = ProductObj.orderStatus,
-            orderCreatedTimestamp = ProductObj.orderCreatedTime.timestamp()//1
+            orderCreatedTimestamp = ProductObj.orderCreatedTime
         )
     
 class OrderSchemasArray(BaseModel):

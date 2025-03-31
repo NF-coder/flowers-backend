@@ -9,6 +9,15 @@ service Geo {
     rpc get_by_id(get_by_idRequest) returns (get_by_idResponce) {}
 }
 
+message get_by_idResponce {
+    int64 geoId = 1;
+    int64 userId = 2;
+    string country = 3;
+    string city = 4;
+    string street = 5;
+    string building = 6;
+    string flat = 7;
+}
 message add_geoRequest {
     string country = 1;
     string city = 2;
@@ -22,13 +31,4 @@ message get_by_idRequest {
 }
 message add_geoResponce {
     int64 id = 1;
-}
-message get_by_idResponce {
-    int64 geoId = 1;
-    int64 userId = 2;
-    string country = 3;
-    string city = 4;
-    string street = 5;
-    string building = 6;
-    string flat = 7;
 }

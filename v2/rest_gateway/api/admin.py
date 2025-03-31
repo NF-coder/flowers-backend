@@ -17,14 +17,16 @@ router = APIRouter(
 
 client = GrpcClient(
     port=50511,
+    ip="buisness_logic",
     proto_file_relpath="api/protos/AdminLogic.proto"
 )
 commands = AdminCommands(
     client = client
 )
 
+
 @router.get(
-    "/listSuppliersRequests",
+    "/suppliers-requests",
     tags=["admin"],
     summary="Список заявок на добавление поставщиков",
     status_code=200
@@ -50,7 +52,7 @@ async def listSuppliersRequests(
             BasicException: for all possible errors
     '''
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_headers.Authorization
+        request_headers.HTTPBearer
     )
     await Tokens.checkPremissions(
         token=decoded_auth_info,
@@ -71,14 +73,14 @@ async def listSuppliersRequests(
     ]
 
 @router.post(
-    "/approveSupplierRequest",
+    "/approve-supplier-request/{user_id}",
     tags=["admin"],
     summary="Одобрение заявки от поставщика",
     status_code=200
 )
 async def approveSupplierRequest(
         request_headers: Annotated[approveSuppliersRequestModels.RequestHeaderModel, Header()],
-        request_body: Annotated[approveSuppliersRequestModels.RequestBodyModel, Body()]
+        user_id: int
     ) -> approveSuppliersRequestModels.ResponceSchema:
     '''
         POST reqest wich implements confirmation of supplier
@@ -97,7 +99,7 @@ async def approveSupplierRequest(
             BasicException: for all possible errors
     '''
     decoded_auth_info = await Tokens.decode_acess_token(
-        request_headers.Authorization
+        request_headers.HTTPBearer
     )
 
     await Tokens.checkPremissions(
@@ -106,7 +108,7 @@ async def approveSupplierRequest(
     )
 
     await commands.approve_supplier_request(
-        id=request_body.id
+        id=user_id
     )
 
     return approveSuppliersRequestModels.ResponceSchema()

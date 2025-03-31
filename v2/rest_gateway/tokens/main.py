@@ -41,6 +41,7 @@ class Tokens():
                 payload
             )
         except Exception as e:
+            print("dec-err", traceback.format_exc())
             raise CantDecodeJWT(
                 description="Can't decode JWT. Maybe it expired"
             )
@@ -51,7 +52,6 @@ class Tokens():
         isConfirmedSupplier: bool = False,
         isConfirmed: bool = False
     ) -> None:
-
         if isAdmin and not token.isAdmin:
             raise NotEnoughPremissions(
                 description="You should be admin!"

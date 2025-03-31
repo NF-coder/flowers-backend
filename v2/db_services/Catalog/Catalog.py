@@ -112,7 +112,7 @@ class Catalog():
             request: UserIdModel
         ) -> ProductDTOArray:
 
-        result = await self.CatalogAPI.get_my_products_time_desc(
+        result = await self.CatalogAPI.get_all_my_products(
             userId = request.userId
         )
         return ProductDTOArray(
@@ -124,33 +124,33 @@ class Catalog():
     
     # BAD SEARCH FUNCTION!
     # TODO: REWRITE IT!
+    @app.grpc_method()
     async def search_in_title(
             self,
-            phrase: str,
-            start: int,
-            count: int,
-            sort: str
-        ) -> List[ProductDTO]:
-        pass
-        '''if CatalogSession is None:
-            CatalogSession = await self.CatalogAPI.startSession()
-        if AdditionalImagesSession is None:
-            AdditionalImagesSession = await self.AdditionalImagesAPI()
+            request: SearchRequest
+        ) -> ProductDTOArray:
 
-        if sort == "time_descending":
-            return await CatalogSession.search_title_contains_time_desc(
-                phrase,
-                start,
-                count
+        if request.sort == "time_descending":
+            result =  await self.CatalogAPI.search_title_contains_time_desc(
+                request.phrase,
+                request.start,
+                request.count
             )
-        elif sort == "time_upscending":
-            return await CatalogSession.search_title_contains_time_upsc(
-                phrase,
-                start,
-                count
+        elif request.sort == "time_upscending":
+            result = await self.CatalogAPI.search_title_contains_time_upsc(
+                request.phrase,
+                request.start,
+                request.count
             )
         else:
-            raise Developing("Sorry, this sort type is unimplemeted. We're already working on it...")'''
+            raise Developing("Sorry, this sort type is unimplemeted. We're already working on it...")
+        
+        return ProductDTOArray(
+            productDTOArray=[ 
+                await ProductDTO.parse(product)
+                for product in result
+            ]
+        )
 
 app.configure_service(
     cls=Catalog(),

@@ -1,0 +1,11 @@
+FROM python:3.12.8-slim
+LABEL maintainer="@ReshNF"
+
+COPY . .
+
+RUN pip install --upgrade pip
+RUN pip install -r reqrments.txt
+
+EXPOSE 50505
+
+CMD python Catalog.py

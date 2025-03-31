@@ -16,6 +16,10 @@ class CatalogCommands:
             functionName="get_catalog",
             className="CatalogLogic"
         )
+        self.search__ = client.configure_command(
+            functionName="search",
+            className="CatalogLogic"
+        )
     
     async def get_product_by_id(self, productId: int) -> ProductSchema:
         responce =  await self.get_product_by_id__(
@@ -46,6 +50,25 @@ class CatalogCommands:
 
     async def get_catalog(self, start: int, count: int, sort: str) -> list[ProductSchema]:
         responce =  await self.get_catalog__(
+            start = start,
+            count = count,
+            sort = sort
+        )
+        return [
+            ProductSchema(
+                productId=product.productId,
+                supplierId=product.supplierId,
+                title=product.title,
+                titleImage=product.title,
+                cost=product.cost,
+                description=product.description
+            )
+            for product in responce.ProductSchemasArray
+        ]
+    
+    async def search(self, request: str, start: int, count: int, sort: str) -> list[ProductSchema]:
+        responce =  await self.search__(
+            req = request,
             start = start,
             count = count,
             sort = sort

@@ -1,7 +1,9 @@
 from .schemas.CatalogModels import *
 
+from simple_rpc import GrpcClient
+
 class CatalogCommands():
-    def __init__(self, client) -> None:
+    def __init__(self, client: GrpcClient) -> None:
         self.get_product_by_id__ = client.configure_command(
             functionName="get_product_by_id",
             className="Catalog"
@@ -19,6 +21,15 @@ class CatalogCommands():
             className="Catalog"
         )
     
+        self.search_in_title__ = client.configure_command(
+            functionName="search_in_title",
+            className="Catalog"
+        )
+        self.get_all_my_products__ = client.configure_command(
+            functionName="get_all_my_products",
+            className="Catalog"
+        )
+
     async def get_product_by_id(self, productId: int) -> ProductDTO:
         return ProductDTO.model_validate(
             await self.get_product_by_id__(
@@ -56,6 +67,25 @@ class CatalogCommands():
                 start=start,
                 count=count,
                 sort=sort
+            ),
+            from_attributes=True
+        )
+    
+    async def search_in_title(self, phrase: str, start: int, count: int, sort: str) -> ProductDTOArray:
+        return ProductDTOArray.model_validate(
+            await self.search_in_title__(
+                phrase=phrase,
+                start=start,
+                count=count,
+                sort=sort
+            ),
+            from_attributes=True
+        )
+    
+    async def get_all_my_products(self, userId: int) -> ProductDTOArray:
+        return ProductDTOArray.model_validate(
+            await self.get_all_my_products__(
+                userId=userId
             ),
             from_attributes=True
         )

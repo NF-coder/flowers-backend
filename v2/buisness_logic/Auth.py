@@ -4,6 +4,7 @@ from simple_rpc import GrpcClient, GrpcServer
 
 from commands.UsersCommands import UsersCommands
 from commands.AuthCommands import AuthCommands
+from commands.TgIdAuthCommands import TgIdAuthCommands
 
 from output_schemas.AuthSchemas import *
 from input_schemas.Auth import *
@@ -12,17 +13,27 @@ import asyncio
 
 UsersClient = GrpcClient(
     port=50501,
+    ip="users_controller",
     proto_file_relpath="protos/Users.proto"
 )
 AuthClient = GrpcClient(
     port=50502,
+    ip="email_auth_controller",
     proto_file_relpath="protos/EmailAuth.proto"
+)
+TgIdAuth = GrpcClient(
+    port=50507,
+    ip="tg_id_auth_controller",
+    proto_file_relpath="protos/TgIdAuth.proto"
 )
 UsersCommandsManager = UsersCommands(
     client = UsersClient
 )
 EmailAuthCommandsManager = AuthCommands(
     client = AuthClient
+)
+TgIdAuthCommandsManager = TgIdAuthCommands(
+    client = TgIdAuth
 )
 app = GrpcServer()
 
@@ -67,57 +78,36 @@ class AuthLogic():
         )
         return await UserSchema.parse(new_user_data)
     
+    @app.grpc_method()
     async def sign_in_by_tg_id(
             self,
-            tgId: int
+            request: TgIdModel
         ) -> UserSchema:
-        isCrrectPassword = await TgIdAuth.check_password_by_email(
-            email=email,
-            password=password
-        )
-        if not isCrrectPassword:
-            raise BasicException(
-                code=400,
-                description="Incorrect password"
-            )
-        result = Users.get_info_by_email(
-            email=email
+        userId = (await TgIdAuthCommandsManager.get_userId_by_tgId(
+            tgId=request.tgId
+        )).userId
+        result = await UsersCommandsManager.get_user_by_id(
+            userId=userId
         )
         return await UserSchema.parse(result)
     
+    @app.grpc_method()
     async def register_by_tg_id(
             self,
-            email: str,
-            password: str,
-            type: str
+            request: RegisterByTgId
         ) -> UserSchema:
-        await Users.register(
-            email=email,
-            password=password, 
-            type=type
+        new_user = await UsersCommandsManager.add_new_user(
+            type=request.type
         )
-        new_user_data = await Users.get_info_by_email(
-            email=email
+        await TgIdAuthCommandsManager.add_auth_method(
+            tgId=request.tgId,
+            userId=new_user.userId    
+        )
+        new_user_data = await UsersCommandsManager.get_user_by_id(
+            userId=new_user.userId   
         )
         return await UserSchema.parse(new_user_data)
     
-    async def confirmEmail(
-            self,
-            id: int
-        ) -> UserSchema:
-        await Users.confirm_email(id = id)
-        new_user_data = await Users.get_info_by_id(
-            id=id
-        )
-        return await UserSchema.parse(new_user_data)
-    
-    async def delete_user(
-            self,
-            email: str
-        ) -> None:
-        await Users.delete_user_by_email(
-            email=email
-        )
 
 app.configure_service(
     cls=AuthLogic(),

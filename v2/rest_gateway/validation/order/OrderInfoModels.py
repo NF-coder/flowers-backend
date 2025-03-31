@@ -38,7 +38,7 @@ class ResponceSchema(BaseModel):
             ),
             orderStatus=OrderObj.orderStatus,
             orderCreatedTime=OrderObj.orderCreatedTimestamp,
-            costomerPhone=OrderObj.phoneNumber,
+            customerPhone=OrderObj.phoneNumber,
             customerFirstName=OrderObj.costumerFirstName,
             customerSecondName=OrderObj.costumerSecondName,
             comment=OrderObj.comment,

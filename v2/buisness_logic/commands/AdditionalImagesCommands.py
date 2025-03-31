@@ -1,7 +1,9 @@
 from .schemas.AdditionalImagesModels import *
 
+from simple_rpc import GrpcClient
+
 class AdditionalImagesCommands():
-    def __init__(self, client) -> None:
+    def __init__(self, client: GrpcClient) -> None:
         self.add_images__ = client.configure_command(
             functionName="add_images",
             className="ProductAdditionalImages"

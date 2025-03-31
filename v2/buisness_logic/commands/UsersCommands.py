@@ -1,7 +1,9 @@
 from .schemas.UsersModels import *
 
+from simple_rpc import GrpcClient
+
 class UsersCommands():
-    def __init__(self, client) -> None:
+    def __init__(self, client: GrpcClient) -> None:
         self.find_unconfirmed_suppliers__ = client.configure_command(
             functionName="find_unconfirmed_suppliers",
             className="Users"
@@ -16,6 +18,10 @@ class UsersCommands():
         )
         self.get_user_by_id__ = client.configure_command(
             functionName="get_info_by_id",
+            className="Users"
+        )
+        self.delete_user_by_id__ = client.configure_command(
+            functionName="delete_user_by_id",
             className="Users"
         )
     
@@ -48,4 +54,9 @@ class UsersCommands():
                 userId = userId
             ),
             from_attributes=True
+        )
+    
+    async def delete_user_by_id(self, userId: int) -> None:
+        await self.delete_user_by_id__(
+            userId = userId
         )

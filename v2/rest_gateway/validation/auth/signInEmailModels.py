@@ -7,15 +7,15 @@ class RequestModel(BaseModel):
     '''
         Request validator for /auth/signIn
         Attributes:
-            Authorization (str): user's Bearer token            
+            HTTPBearer (str): user's Bearer token            
     '''
-    Authorization: str = Field(
+    HTTPBearer: str = Field(
         default=None,
         example="Basic base64(user:password)",
         description="Basic auth token",
     )
 
-    @field_validator('Authorization', mode='after')
+    @field_validator('HTTPBearer', mode='after')
     @classmethod
     def check_basic_auth_token(cls: Self, token: str) -> str:
         '''

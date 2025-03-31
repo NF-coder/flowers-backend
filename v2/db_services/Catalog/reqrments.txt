@@ -1,0 +1,4 @@
+https://github.com/NF-coder/SimpleRPC/releases/download/baseline-insecure/main.zip
+pydantic==2.8.2
+asyncpg==0.30.0
+sqlalchemy[asyncio]==2.0.38

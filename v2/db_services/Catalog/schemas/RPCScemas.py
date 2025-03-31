@@ -23,3 +23,9 @@ class AddProductRequest(BaseModel):
     costNum: int
     description: str
     authorId: int
+
+class SearchRequest(BaseModel):
+    phrase: str
+    start: int
+    count: int
+    sort: str

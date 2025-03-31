@@ -13,3 +13,13 @@ class MyProductsListReq(BaseModel):
     start: int
     count: int
     sort: str
+
+class UserIdReq(BaseModel):
+    userId: int
+
+class SetOrderStatusReq(BaseModel):
+    orderId: int
+    newStatus: str
+
+class OrderIdReq(BaseModel):
+    orderId: int

@@ -1,0 +1,5 @@
+fastapi[standard]==0.115.4
+bcrypt==4.0.1
+python-jose==3.3.0
+https://github.com/NF-coder/SimpleRPC/releases/download/baseline-insecure/main.zip
+python-multipart==0.0.19

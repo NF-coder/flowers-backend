@@ -40,7 +40,7 @@ class UsersAPI(BasicAPI):
     
     async def get_by_id(self, id: int) -> List[DatabaseType]:
         '''
-            Method that returns all user with specified id.
+            Method that returns all info about user with specified id.
             Args:
                 id(str): user's id
             Returns:
@@ -62,6 +62,22 @@ class UsersAPI(BasicAPI):
         '''
         statement = update(self.base).where(self.base.id == id).values(
             isConfirmed=status
+        )
+        async with self.session() as session:
+            await session.execute(statement)
+            await session.commit()
+    
+    async def set_admin_status_by_id(self, id: int, status: bool) -> None:
+        '''
+            Method that returns all user with specified id.
+            Args:
+                id(int): User's id
+                status(bool): New email confirmation status 
+            Returns:
+                NoneType:
+        '''
+        statement = update(self.base).where(self.base.id == id).values(
+            isAdmin=status
         )
         async with self.session() as session:
             await session.execute(statement)

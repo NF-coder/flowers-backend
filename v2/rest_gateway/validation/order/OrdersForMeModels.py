@@ -20,7 +20,7 @@ class ResponceItemSchema(BaseModel):
     customerFirstName: str
     customerSecondName: str
     comment: str
-    productIdArray: int
+    productIdArray: list[int]
 
     @staticmethod
     async def parse(OrderObj: OrderSchema):
@@ -35,9 +35,9 @@ class ResponceItemSchema(BaseModel):
             ),
             orderStatus=OrderObj.orderStatus,
             orderCreatedTime=OrderObj.orderCreatedTimestamp,
-            costomerPhone=OrderObj.phoneNumber,
+            customerPhone=OrderObj.phoneNumber,
             customerFirstName=OrderObj.costumerFirstName,
             customerSecondName=OrderObj.costumerSecondName,
             comment=OrderObj.comment,
-            productId=OrderObj.productId
+            productIdArray=[OrderObj.productId]
         )

@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   postgres:
     image: postgres:13.3
@@ -11,25 +10,113 @@ services:
       - "5432:5432" # проброшены для дебага и удобства разработки, на релизе убрать
     networks:
       - net1
-  flowers_backend:
-    container_name: flowers_backend
+
+  catalog_controller:
+    container_name: catalog_controller
     depends_on:
-      - upload-images
       - postgres
-    build: ./backend
+    build: ./v2/db_services/Catalog
+    networks:
+      - net1
+  
+  email_auth_controller:
+    container_name: email_auth_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/EmailAuth
+    networks:
+      - net1
+  
+  geo_controller:
+    container_name: geo_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/Geo
+    networks:
+      - net1
+  
+  order_controller:
+    container_name: order_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/Order
+    networks:
+      - net1
+
+  tg_id_auth_controller:
+    container_name: tg_id_auth_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/TgIdAuth
+    networks:
+      - net1
+  
+  product_additional_images_controller:
+    container_name: product_additional_images_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/ProductAdditionalImages
+    networks:
+      - net1
+  
+  users_controller:
+    container_name: users_controller
+    depends_on:
+      - postgres
+    build: ./v2/db_services/Users
+    networks:
+      - net1
+
+  buisness_logic:
+    container_name: buisness_logic
+    build: ./v2/buisness_logic
+    depends_on:
+      - users_controller
+      - product_additional_images_controller
+      - tg_id_auth_controller
+      - order_controller
+      - geo_controller
+      - email_auth_controller
+      - catalog_controller
+    networks:
+      - net1
+    #extra_hosts:
+    #  - "host.docker.internal:host-gateway"
+
+  rest_gateway:
+    container_name: rest_gateway
+    depends_on:
+      - buisness_logic
+    build: ./v2/rest_gateway
     ports:
       - "8453:8453"
     networks:
       - net1
+    #extra_hosts:
+    #  - "host.docker.internal:host-gateway"
+
+  #rest_gateway_nginx:
+  #  container_name: nginx
+  #  depends_on:
+  #    - postgres
+  #  build: ./v2/rest_gateway_nginx
+  #  ports:
+  #    - "80:80"
+  #  networks:
+  #    - net1
+  #  extra_hosts:
+  #    - "host.docker.internal:host-gateway"
+  
   upload-images:
     container_name: uploadImages
     depends_on: 
       - postgres
-    build: ./imagesUploader
+    build: ./v2/imagesUploader
     ports:
       - "8450:8450"
     networks:
       - net1
+
 networks:
   net1:
     driver: bridge

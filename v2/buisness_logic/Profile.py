@@ -6,7 +6,7 @@ from output_schemas.ProfileSchemas import *
 from input_schemas.Profile import *
 
 UsersClient = GrpcClient(
-    port=50516,
+    port=50501,
     ip="users_controller",
     proto_file_relpath="protos/Users.proto"
 )
@@ -35,7 +35,7 @@ class ProfileLogic():
         resp = await UsersCommandsManager.get_user_by_id(
             userId=request.userId
         )
-        return UserSchema.parse(resp)
+        return await UserSchema.parse(resp)
 
 app.configure_service(
     cls=ProfileLogic(),

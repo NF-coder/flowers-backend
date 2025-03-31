@@ -49,7 +49,6 @@ class AuthCommands:
         )
     
     async def sign_in_by_tgId(self, tgId: int) -> UserSchema:
-        print("TID", tgId)
         responce = await self.sign_in_by_tg_id__(
             tgId=tgId
         )

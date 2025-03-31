@@ -10,8 +10,8 @@ class RegisterByEmailReq(BaseModel):
     type: str
 
 class RegisterByTgId(BaseModel):
-    tgId: str
+    tgId: int
     type: str
 
 class TgIdModel(BaseModel):
-    tgId: str
+    tgId: int

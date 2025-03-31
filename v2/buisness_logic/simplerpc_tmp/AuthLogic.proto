@@ -11,7 +11,7 @@ service AuthLogic {
     rpc register_by_tg_id(register_by_tg_idRequest) returns (register_by_tg_idResponce) {}
 }
 
-message sign_in_by_emailResponce {
+message register_by_emailResponce {
     int64 userId = 1;
     string type = 2;
     bool isConfirmed = 3;
@@ -25,25 +25,7 @@ message register_by_tg_idResponce {
     bool isSupplierStatusConfirmed = 4;
     bool isAdmin = 5;
 }
-message sign_in_by_emailRequest {
-    string email = 1;
-    string password = 2;
-}
-message sign_in_by_tg_idResponce {
-    int64 userId = 1;
-    string type = 2;
-    bool isConfirmed = 3;
-    bool isSupplierStatusConfirmed = 4;
-    bool isAdmin = 5;
-}
-message register_by_tg_idRequest {
-    string tgId = 1;
-    string type = 2;
-}
-message sign_in_by_tg_idRequest {
-    string tgId = 1;
-}
-message register_by_emailResponce {
+message sign_in_by_emailResponce {
     int64 userId = 1;
     string type = 2;
     bool isConfirmed = 3;
@@ -54,4 +36,22 @@ message register_by_emailRequest {
     string email = 1;
     string password = 2;
     string type = 3;
+}
+message sign_in_by_tg_idRequest {
+    int64 tgId = 1;
+}
+message sign_in_by_emailRequest {
+    string email = 1;
+    string password = 2;
+}
+message register_by_tg_idRequest {
+    int64 tgId = 1;
+    string type = 2;
+}
+message sign_in_by_tg_idResponce {
+    int64 userId = 1;
+    string type = 2;
+    bool isConfirmed = 3;
+    bool isSupplierStatusConfirmed = 4;
+    bool isAdmin = 5;
 }

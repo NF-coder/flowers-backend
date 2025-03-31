@@ -49,10 +49,11 @@ class UsersCommands():
         )
 
     async def get_user_by_id(self, userId: int) -> User:
+        resp = await self.get_user_by_id__(
+            userId = userId
+        )
         return User.model_validate(
-            await self.get_user_by_id__(
-                userId = userId
-            ),
+            resp,
             from_attributes=True
         )
     

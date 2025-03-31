@@ -31,7 +31,7 @@ class TgIdAuthCommands():
 
     async def get_userId_by_tgId(self, tgId: int) -> UserIdModel:
         return UserIdModel(
-            userId = await self.get_userId_by_tg_id__(
+            userId = (await self.get_userId_by_tg_id__(
                 tgId=tgId
-            )
+            )).userId
         )

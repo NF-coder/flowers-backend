@@ -77,8 +77,14 @@ async def get_user_info(
         request_headers.HTTPBearer
     )
 
-    await commands.get_user_info(
+    user_info = await commands.get_user_info(
         userId=decoded_auth_info.id
     )  
 
-    return deleteUserModels.ResponceSchema()
+    return getProfileBasics.ResponceSchema(
+        userId=user_info.userId,
+        type=user_info.type,
+        isConfirmed=user_info.isConfirmed,
+        isSupplierStatusConfirmed=user_info.isSupplierStatusConfirmed,
+        isAdmin=-user_info.isAdmin
+    )

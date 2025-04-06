@@ -105,7 +105,7 @@ async def validationException_handler(request: Request, exc: RequestValidationEr
     )
 
 @app.get(
-    f'/api/v{Settings.API_VERSION}/ping',
+    f'/ping',
     summary="ping",
     status_code=200
 )

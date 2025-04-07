@@ -22,3 +22,14 @@
 Main atabase schema
 ![schema](https://github.com/NF-coder/flowers-backend/blob/master/docs/db/diagram.png?raw=true)
 You also can edit this schema and see it's deatails by loading .dbml file from [/docs/db/](https://github.com/NF-coder/flowers-backend/tree/master/docs/db) to [drawdb](https://www.drawdb.app/editor)
+
+## API
+There're two sub-domains in app:
+1. app.* (i.e. app.localhost)
+2. images.* (i.e. images.localhost)
+
+You can see most actual OpenAPI specifications on *app.yourdomain/docs* and *images.yourdomain/docs*
+Less actual version you can see [here](https://github.com/NF-coder/flowers-backend/tree/master/docs/openapi) (*Last update: 07.04.25*)
+
+# Known bugs
+1. Uncorrect written sub-domains redirecting to api.* subdomain

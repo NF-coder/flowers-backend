@@ -1,5 +1,6 @@
 # TODO List:
 - [ ] DOCUMENTATION!
+- [ ] autoreconnect when connection to database is lost
 - [ ] Replace some @dataclass constants to env variables in .env files
 - [ ] SessionId + JWT
 - [ ] GRPC encryption

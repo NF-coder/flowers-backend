@@ -8,6 +8,12 @@ services:
       POSTGRES_PASSWORD: "horse_ate_green_guinea_pig"
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Volume для хранения данных
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     #ports:
     #  - "5432:5432" # проброшены для дебага и удобства разработки, на релизе убрать
     networks:
@@ -16,7 +22,8 @@ services:
   catalog_controller:
     container_name: catalog_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/Catalog
     networks:
       - net2
@@ -24,7 +31,8 @@ services:
   email_auth_controller:
     container_name: email_auth_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/EmailAuth
     networks:
       - net2
@@ -32,7 +40,8 @@ services:
   geo_controller:
     container_name: geo_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/Geo
     networks:
       - net2
@@ -40,7 +49,8 @@ services:
   order_controller:
     container_name: order_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/Order
     networks:
       - net2
@@ -48,7 +58,8 @@ services:
   tg_id_auth_controller:
     container_name: tg_id_auth_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/TgIdAuth
     networks:
       - net2
@@ -56,7 +67,8 @@ services:
   product_additional_images_controller:
     container_name: product_additional_images_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/ProductAdditionalImages
     networks:
       - net2
@@ -64,7 +76,8 @@ services:
   users_controller:
     container_name: users_controller
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build: ./v2/db_services/Users
     networks:
       - net2

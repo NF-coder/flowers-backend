@@ -17,3 +17,8 @@
 └── docs/                   # Документация (пишется)
 ```
 
+# Docs overview
+### Databse
+Main atabase schema
+![schema](https://github.com/NF-coder/flowers-backend/blob/master/docs/db/diagram.png?raw=true)
+You also can edit this schema and see it's deatails by loading .dbml file from /docs/db/ to [drawdb](https://www.drawdb.app/editor)

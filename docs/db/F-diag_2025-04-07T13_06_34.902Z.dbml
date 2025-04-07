@@ -1,0 +1,85 @@
+Table Catalog {
+	id serial [ pk, not null, unique ]
+	title varchar [ not null ]
+	titleImage varchar [ not null ]
+	supplierId integer [ not null ]
+	cost integer [ not null ]
+	description text
+}
+
+Table EmailAuth {
+	email varchar [ pk, not null, unique ]
+	password bytea [ not null ]
+	userId integer [ not null, unique ]
+}
+
+Table Geo {
+	id serial [ pk, not null, unique ]
+	country varchar [ not null ]
+	city varchar [ not null ]
+	street varchar [ not null ]
+	building varchar [ not null ]
+	flat varchar [ not null ]
+}
+
+Table Order {
+	id serial [ pk, not null, unique ]
+	costumerFirstName varchar [ not null ]
+	costumerSecondName varchar [ not null ]
+	comment varchar [ not null ]
+	phoneNumber varchar [ not null ]
+	isFinished boolean [ not null, default: False ]
+	isCanceled boolean [ not null, default: False ]
+	geoId integer [ not null ]
+	userId integer [ not null ]
+	productId integer [ not null ]
+	orderStatus varchar [ not null ]
+	orderCreatedTime timestamp
+}
+
+Table ProductAdditionalImages {
+	id serial [ pk, not null, unique ]
+	imageUrl varchar [ not null ]
+	productId integer [ not null ]
+}
+
+Table TgIdAuth {
+	tgId integer [ pk, not null, unique ]
+	userId integer [ not null, unique ]
+}
+
+Table Users {
+	id serial [ pk, not null, unique ]
+	type varchar [ not null ]
+	isConfirmed boolean [ not null, default: False ]
+	isSupplierStatusConfirmed boolean [ not null, default: False ]
+	isAdmin boolean [ not null, default: False ]
+}
+
+Ref fk_TgIdAuth_userId_Users {
+	TgIdAuth.userId - Users.id [ delete: no action, update: no action ]
+}
+
+Ref fk_Catalog_id_Order {
+	Catalog.id < Order.productId [ delete: no action, update: no action ]
+}
+
+Ref fk_Order_userId_Users {
+	Order.userId > Users.id [ delete: no action, update: no action ]
+}
+
+Ref fk_Catalog_supplierId_Users {
+	Catalog.supplierId > Users.id [ delete: no action, update: no action ]
+}
+
+Ref fk_ProductAdditionalImages_productId_Catalog {
+	ProductAdditionalImages.productId > Catalog.id [ delete: no action, update: no action ]
+}
+
+Ref fk_EmailAuth_userId_Users {
+	EmailAuth.userId - Users.id [ delete: no action, update: no action ]
+}
+
+Ref fk_Order_geoId_Geo {
+	Order.geoId - Geo.id [ delete: no action, update: no action ]
+}

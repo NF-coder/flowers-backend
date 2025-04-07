@@ -29,7 +29,10 @@ app = FastAPI(
     title="Flowers API",
     version="0.2.0",
     responses={**responses},
-    root_path=f"/api/v{Settings.API_VERSION}"
+
+    root_path=f"/v{Settings.API_VERSION}",
+
+    #openapi_url="api/v1/openapi.json"
 )
 
 origins = ["*"]

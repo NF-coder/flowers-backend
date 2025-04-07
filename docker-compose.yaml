@@ -6,6 +6,8 @@ services:
       POSTGRES_DB: "db"
       POSTGRES_USER: "release"
       POSTGRES_PASSWORD: "horse_ate_green_guinea_pig"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Volume для хранения данных
     #ports:
     #  - "5432:5432" # проброшены для дебага и удобства разработки, на релизе убрать
     networks:
@@ -98,23 +100,30 @@ services:
     container_name: nginx
     depends_on:
       - rest_gateway
+      - images_uploader
     build: ./v2/rest_gateway_nginx
     ports:
       #- "80:80"
       - "443:443"
     networks:
-      - net1
+      - net2
     #extra_hosts:
     #  - "host.docker.internal:host-gateway"
   
-  upload-images:
-    container_name: uploadImages
-    depends_on: 
-      - postgres
-    build: ./v2/imagesUploader
+  images_uploader:
+    container_name: images_uploader
+    build: ./v2/images_uploader
+    networks:
+      - net2
+    volumes:
+      - images_storage:/images
 
 networks:
   net1:
     driver: bridge
   net2:
     driver: bridge
+
+volumes:
+  images_storage:
+  postgres_data:

@@ -11,8 +11,12 @@ from ..components.ReviewsDict import ReviewsDict
 from api.commands.schemas.CatalogCommandsSchemas import *
 
 class RequestQueryModel(BaseModel):
-    start: int = 0,
-    count: int = 20,
+    start: int = Field(
+        example=0
+    )
+    count: int = Field(
+        example=20
+    )
     sort: Literal["time_upscending", "time_descending"] = "time_descending"
     # category: str # not used
 

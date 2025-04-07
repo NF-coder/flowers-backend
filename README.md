@@ -1,2 +1,3 @@
 # TODO List:
-- [ ] Replace some @dataclass constants to env variables to .env files
+- [ ] Replace some @dataclass constants to env variables in .env files
+- [ ] SessionId + JWT

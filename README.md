@@ -7,7 +7,7 @@
 
 # Structure
 ```
-├── .backend/                # Директория с предыдущей версией приложения
+├── .backend/               # Директория с предыдущей версией приложения
 ├── v2/                     # Директория с микросервисами
     ├── db_services/        # Сервисы, взаимодействующие с СУЬД. В перспективе заменяем их на go
     ├── buisness_logic/     # Слой бизнес-логики. Полумонолит
@@ -18,7 +18,7 @@
 ```
 
 # Docs overview
-### Databse
+## Databse
 Main atabase schema
 ![schema](https://github.com/NF-coder/flowers-backend/blob/master/docs/db/diagram.png?raw=true)
 You also can edit this schema and see it's deatails by loading .dbml file from [/docs/db/](https://github.com/NF-coder/flowers-backend/tree/master/docs/db) to [drawdb](https://www.drawdb.app/editor)

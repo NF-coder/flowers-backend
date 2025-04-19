@@ -22,8 +22,8 @@ class RequestQueryModel(BaseModel):
             count (int): number of elements
             sort (str): one of `time_upscending` `time_descending`. Other unimplemented
     '''
-    start: int = 0,
-    count: int = 20,
+    start: int = 0
+    count: int = 20
     sort: Literal["time_upscending", "time_descending"] = "time_descending"
 
 class ResponceItemSchema(BaseModel):

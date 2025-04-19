@@ -19,6 +19,9 @@
 └── docs/                   # Документация (пишется)
 ```
 
+# Scenarios
+See [here](https://github.com/NF-coder/flowers-backend/tree/master/docs/scripts)
+
 # Docs overview
 
 ## API

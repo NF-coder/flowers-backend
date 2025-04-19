@@ -153,6 +153,8 @@ networks:
     driver: bridge
   net_auth:
     driver: bridge
+  net_logic:
+    driver: bridge
 
 volumes:
   images_storage:

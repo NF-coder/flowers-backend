@@ -1,0 +1,3 @@
+python-jose==3.3.0
+https://github.com/NF-coder/SimpleRPC/releases/download/baseline-insecure/main.zip
+redis[hiredis]

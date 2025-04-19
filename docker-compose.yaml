@@ -18,7 +18,20 @@ services:
     #ports:
     #  - "5432:5432" # проброшены для дебага и удобства разработки, на релизе убрать
     networks:
-      - net2
+      - net_postgres
+  
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    environment:
+      WORKDIR: "/redis_data"
+    volumes:
+      - redis_data:/redis_data  # Volume для хранения данных
+    #ports:
+    #  - "6379:6379" # проброшены для дебага и удобства разработки, на релизе убрать
+    networks:
+      - net_auth
 
   catalog_controller:
     container_name: catalog_controller
@@ -27,7 +40,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/Catalog
     networks:
-      - net2
+      - net_postgres
   
   email_auth_controller:
     container_name: email_auth_controller
@@ -36,7 +49,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/EmailAuth
     networks:
-      - net2
+      - net_postgres
   
   geo_controller:
     container_name: geo_controller
@@ -45,7 +58,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/Geo
     networks:
-      - net2
+      - net_postgres
   
   order_controller:
     container_name: order_controller
@@ -54,7 +67,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/Order
     networks:
-      - net2
+      - net_postgres
 
   tg_id_auth_controller:
     container_name: tg_id_auth_controller
@@ -63,7 +76,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/TgIdAuth
     networks:
-      - net2
+      - net_postgres
   
   product_additional_images_controller:
     container_name: product_additional_images_controller
@@ -72,8 +85,8 @@ services:
         condition: service_healthy
     build: ./v2/db_services/ProductAdditionalImages
     networks:
-      - net2
-  
+      - net_postgres
+
   users_controller:
     container_name: users_controller
     depends_on:
@@ -81,7 +94,7 @@ services:
         condition: service_healthy
     build: ./v2/db_services/Users
     networks:
-      - net2
+      - net_postgres
 
   buisness_logic:
     container_name: buisness_logic
@@ -95,7 +108,8 @@ services:
       - email_auth_controller
       - catalog_controller
     networks:
-      - net2
+      - net_logic
+      - net_postgres
     #extra_hosts:
     #  - "host.docker.internal:host-gateway"
 
@@ -105,8 +119,8 @@ services:
       - buisness_logic
     build: ./v2/rest_gateway
     networks:
-      - net2
-      - net1
+      - net_logic
+      - net_gateway
     #extra_hosts:
     #  - "host.docker.internal:host-gateway"
 
@@ -120,7 +134,7 @@ services:
       #- "80:80"
       - "443:443"
     networks:
-      - net2
+      - net_gateway
     #extra_hosts:
     #  - "host.docker.internal:host-gateway"
   
@@ -128,16 +142,19 @@ services:
     container_name: images_uploader
     build: ./v2/images_uploader
     networks:
-      - net2
+      - net_gateway
     volumes:
       - images_storage:/images
 
 networks:
-  net1:
+  net_gateway:
     driver: bridge
-  net2:
+  net_postgres:
+    driver: bridge
+  net_auth:
     driver: bridge
 
 volumes:
   images_storage:
   postgres_data:
+  redis_data:

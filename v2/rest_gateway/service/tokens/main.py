@@ -26,6 +26,7 @@ class Tokens():
 
         return jwt.encode(payload, key = SecuritySettings.SECURITY_KEY, algorithm = SecuritySettings.ALGORYTM), exp
     
+    # why static analizer does not sees JWTInfo object?
     async def decode_acess_token(token: str) -> JWTInfo:
         token = token[7:] if "Bearer" in token else token
         try:
